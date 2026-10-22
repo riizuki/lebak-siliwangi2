@@ -72,7 +72,7 @@ export const TEAM_MEMBERS = [
     role: 'Divisi Acara',
     jurusan: 'S1 Desain Interior',
     division: 'Divisi Acara',
-    avatar: null,
+    avatar: '/images/tim/acara3.jpg',
     badge: 'Divisi Acara',
   },
   {
