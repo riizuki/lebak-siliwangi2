@@ -38,10 +38,22 @@ function SiteControls({ solid = true }) {
 
   return (
     <div className="flex items-center gap-2 shrink-0">
+      {/* Mobile: satu tombol yang langsung mengganti bahasa */}
+      <button
+        onClick={() => setLang(lang === 'id' ? 'en' : 'id')}
+        aria-label={`${t.language}: ${lang.toUpperCase()}`}
+        className={`sm:hidden h-9 px-3 rounded-full flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide transition-colors ${
+          solid ? 'bg-paper-2 text-ink hover:bg-line' : 'bg-white/10 backdrop-blur-md text-white hover:bg-white/20'
+        }`}
+      >
+        <FontAwesomeIcon icon={faGlobe} className="text-[13px]" />
+        {lang}
+      </button>
+
       <div
         role="group"
         aria-label={t.language}
-        className={`flex items-center rounded-full p-1 text-xs font-medium transition-colors ${solid ? 'bg-paper-2' : 'bg-white/10 backdrop-blur-md'}`}
+        className={`hidden sm:flex items-center rounded-full p-1 text-xs font-medium transition-colors ${solid ? 'bg-paper-2' : 'bg-white/10 backdrop-blur-md'}`}
       >
         {['id', 'en'].map((code) => (
           <button
