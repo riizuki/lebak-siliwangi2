@@ -165,6 +165,9 @@ export const GALLERY_FILTERS = [
   { key: 'maggot', label: 'Maggot & Organik' },
   { key: 'alat', label: 'Pembuatan Alat' },
   { key: 'warga', label: 'Bersama Warga' },
+  { key: 'kerja-bakti', label: 'Kerja Bakti' },
+  { key: 'pengepul', label: 'Pengepul' },
+  { key: 'sosialisasi', label: 'Sosialisasi' },
 ];
 
 const img = (name) => `/images/kegiatan/${name}.jpg`;
@@ -183,6 +186,33 @@ export const GALLERY_ITEMS = [
   { src: img('foto-tim'), category: 'warga', title: 'Tim di lokasi bank sampah', location: 'Lebak Siliwangi · Agu 2026' },
   { src: img('maggot-closeup'), category: 'maggot', title: 'Hasil panen maggot', location: 'Lebak Siliwangi · Okt 2026' },
   { src: img('kantor-kelurahan'), category: 'warga', title: 'Kantor Kelurahan Lebak Siliwangi, mitra koordinasi program', location: 'Lebak Siliwangi' },
+  { src: img('hanggar-maggot'), category: 'maggot', title: 'Mengolah sampah organik di Hanggar Maggot kelurahan', location: 'Lebak Siliwangi · Okt 2026' },
+  { src: img('rw07-foto-bersama'), category: 'kerja-bakti', title: 'Foto bersama anak-anak RW 07 setelah kerja bakti', location: 'RW 07 · Sep 2026' },
+  { src: img('rw05-gotong-royong'), category: 'kerja-bakti', title: 'Gotong royong menata taman RW 05', location: 'RW 05 · Sep 2026' },
+  { src: img('pengepul-tumpukan-plastik'), category: 'pengepul', title: 'Meninjau tumpukan botol plastik di pengepul', location: 'Lokasi pengepul · Okt 2026' },
+  { src: img('sosialisasi-aplikasi'), category: 'sosialisasi', title: 'Warga menunjukkan aplikasi yang sudah terpasang', location: 'Lebak Siliwangi · Sep 2026' },
+  { src: img('rw07-menyapu'), category: 'kerja-bakti', title: 'Menyapu daun kering di lapangan RW 07', location: 'RW 07 · Sep 2026' },
+  { src: img('rw05-menanam'), category: 'kerja-bakti', title: 'Menanam ulang tanaman hias saat kerja bakti RW 05', location: 'RW 05 · Sep 2026' },
+  { src: img('pengepul-tim'), category: 'pengepul', title: 'Tim mendata sampah anorganik di pengepul', location: 'Lokasi pengepul · Okt 2026' },
+  { src: img('sosialisasi-diskusi'), category: 'sosialisasi', title: 'Berbincang dengan warga tentang aplikasi', location: 'Lebak Siliwangi · Sep 2026' },
+  { src: img('rw07-memilah-sampah'), category: 'kerja-bakti', title: 'Memilah sampah ke tempat sampah terpilah', location: 'RW 07 · Sep 2026' },
+  { src: img('rw05-dari-atas'), category: 'kerja-bakti', title: 'Suasana kerja bakti RW 05 dari atas', location: 'RW 05 · Sep 2026' },
+  { src: img('pengepul-memilah-plastik'), category: 'pengepul', title: 'Pemilahan botol plastik oleh petugas pengepul', location: 'Lokasi pengepul · Okt 2026' },
+  { src: img('sosialisasi-kartu'), category: 'sosialisasi', title: 'Membagikan kartu informasi aplikasi kepada warga', location: 'Lebak Siliwangi · Sep 2026' },
+  { src: img('sosialisasi-pendampingan'), category: 'sosialisasi', title: 'Mendampingi warga mencoba aplikasi', location: 'Lebak Siliwangi · Sep 2026' },
+  { src: img('rw05-merawat-tanaman'), category: 'kerja-bakti', title: 'Memindahkan tanaman ke pot baru', location: 'RW 05 · Sep 2026' },
+  { src: img('pengepul-kardus'), category: 'pengepul', title: 'Memilah kardus bekas di gudang pengepul', location: 'Lokasi pengepul · Okt 2026' },
+  { src: img('rw07-koordinasi-warga'), category: 'kerja-bakti', title: 'Koordinasi kerja bakti dengan warga RW 07', location: 'RW 07 · Sep 2026' },
+  { src: img('rw07-main-bola'), category: 'kerja-bakti', title: 'Bermain bola bersama anak-anak RW 07', location: 'RW 07 · Sep 2026' },
+  { src: img('rw07-tempat-sampah-pilah'), category: 'kerja-bakti', title: 'Memasukkan sampah ke tempat sampah sesuai jenisnya', location: 'RW 07 · Sep 2026' },
+  { src: img('rw05-media-tanam'), category: 'kerja-bakti', title: 'Menyiapkan media tanam bersama warga RW 05', location: 'RW 05 · Sep 2026' },
+  { src: img('pengepul-angkut'), category: 'pengepul', title: 'Sampah pilahan siap diangkut dari pengepul', location: 'Lokasi pengepul · Okt 2026' },
+  { src: img('sosialisasi-warga'), category: 'sosialisasi', title: 'Warga yang hadir di acara sosialisasi', location: 'Lebak Siliwangi · Sep 2026' },
+  { src: img('sosialisasi-persiapan'), category: 'sosialisasi', title: 'Persiapan konsumsi untuk acara sosialisasi', location: 'Lebak Siliwangi · Sep 2026' },
+  { src: img('rw07-membersihkan-semak'), category: 'kerja-bakti', title: 'Membersihkan semak dan sampah di pagar lapangan RW 07', location: 'RW 07 · Sep 2026' },
+  { src: img('rw05-merapikan-tanaman'), category: 'kerja-bakti', title: 'Merapikan tanaman kering di taman warga', location: 'RW 05 · Sep 2026' },
+  { src: img('rw07-anak-membantu'), category: 'kerja-bakti', title: 'Anak-anak ikut mengumpulkan daun kering', location: 'RW 07 · Sep 2026' },
+  { src: img('rw07-menyapu-bersama-anak'), category: 'kerja-bakti', title: 'Menyapu daun kering bersama anak-anak RW 07', location: 'RW 07 · Sep 2026' },
 ];
 
 export const DIVISION_OUTCOMES = [

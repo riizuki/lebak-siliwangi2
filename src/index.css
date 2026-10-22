@@ -57,3 +57,62 @@ h1, h2, h3, h4 {
   background: #c8ecd9;
   color: var(--color-ink);
 }
+
+/* Teks melingkar pada cursor label */
+.cursor-orbit {
+  animation: cursor-orbit 9s linear infinite;
+}
+
+@keyframes cursor-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Foto di lightbox muncul halus */
+.lightbox {
+  animation: lightbox-in 0.3s ease both;
+}
+
+.lightbox-img {
+  animation: lightbox-img-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes lightbox-in {
+  from { opacity: 0; }
+}
+
+@keyframes lightbox-img-in {
+  from { opacity: 0; transform: scale(0.96); }
+}
+
+/* Foto kegiatan berjalan tanpa henti; berhenti saat di-hover */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 70s) linear infinite;
+}
+
+.marquee-reverse {
+  animation-direction: reverse;
+}
+
+.marquee-track:hover .marquee {
+  animation-play-state: paused;
+}
+
+.marquee-fade {
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation-duration: 240s;
+  }
+}

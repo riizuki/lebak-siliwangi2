@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars, faXmark, faArrowRight, faArrowUp, faArrowUpRightFromSquare,
@@ -202,11 +202,61 @@ function HeroSection() {
   );
 }
 
+/* ── Foto kegiatan berjalan (infinite marquee) ── */
+
+function MarqueeRow({ items, reverse, duration }) {
+  // Daftar digandakan supaya animasi geser -50% menyambung tanpa jeda
+  return (
+    <div className="marquee-track overflow-hidden">
+      <div className={`marquee ${reverse ? 'marquee-reverse' : ''}`} style={{ '--marquee-duration': `${duration}s` }}>
+        {[...items, ...items].map((item, i) => (
+          <a
+            key={i}
+            href="/galeri"
+            data-cursor="Galeri"
+            aria-hidden={i >= items.length}
+            tabIndex={i >= items.length ? -1 : undefined}
+            className="group relative shrink-0 pr-3 sm:pr-4"
+          >
+            <div className="relative w-48 h-36 sm:w-64 sm:h-48 lg:w-[300px] lg:h-56 overflow-hidden rounded-2xl bg-paper-2">
+              <img src={item.src} alt={item.title} className="w-full h-full object-cover object-[center_35%] transition-[filter] duration-500 group-hover:brightness-[0.8]" loading="lazy" />
+              <span className="absolute inset-x-0 bottom-0 p-3 pt-10 bg-gradient-to-t from-ink/80 to-transparent text-white text-xs leading-snug opacity-0 translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+                {item.title}
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ActivityMarquee() {
+  const half = Math.ceil(GALLERY_ITEMS.length / 2);
+  return (
+    <section id="dokumentasi" aria-label="Foto kegiatan" className="py-14 md:py-20 overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 flex items-end justify-between gap-6">
+        <p className="text-sm text-muted max-w-md">
+          <span className="text-ink font-medium">Sepanjang KKN</span> · kerja bakti, bank sampah, maggot, sampai sosialisasi bersama warga.
+        </p>
+        <a href="/galeri" className="shrink-0 inline-flex items-center gap-2 text-sm text-ink border-b border-ink/30 hover:border-ink pb-0.5 transition-colors">
+          Lihat galeri
+          <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+        </a>
+      </div>
+      <div className="marquee-fade space-y-3 sm:space-y-4">
+        <MarqueeRow items={GALLERY_ITEMS.slice(0, half)} duration={70} />
+        <MarqueeRow items={GALLERY_ITEMS.slice(half)} duration={80} reverse />
+      </div>
+    </section>
+  );
+}
+
 /* ── Struktur Tim ── */
 
 function Person({ m, role }) {
   return (
-    <figure data-cursor={m.nickname || m.name.split(' ')[0]} className="group">
+    <figure data-cursor={m.nickname || m.name.split(' ')[0]} data-cursor-type="person" className="group">
       <div className="aspect-[4/5] overflow-hidden rounded-xl bg-paper-2">
         {m.avatar ? (
           <img
@@ -387,7 +437,6 @@ function LocationSection() {
 
             <a
               href={mapsLink(loc.query)}
-              data-cursor="Buka ↗"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2 px-5 py-3 bg-moss hover:bg-moss-dark text-white text-sm rounded-full transition-colors"
@@ -404,38 +453,136 @@ function LocationSection() {
 
 /* ── Galeri ── */
 
-function GallerySection() {
-  const [filter, setFilter] = useState('semua');
-  const filtered = filter === 'semua' ? GALLERY_ITEMS : GALLERY_ITEMS.filter((i) => i.category === filter);
-  const countOf = (key) => (key === 'semua' ? GALLERY_ITEMS.length : GALLERY_ITEMS.filter((i) => i.category === key).length);
+// Jumlah foto yang tampil di landing page; sisanya di halaman /galeri
+const HOME_GALLERY_LIMIT = 13;
+
+function Lightbox({ items, index, onClose, onNav }) {
+  const item = items[index];
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') onNav(1);
+      if (e.key === 'ArrowLeft') onNav(-1);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [onClose, onNav]);
+
+  const navBtn = 'absolute top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors';
 
   return (
-    <section id="galeri" className="py-20 md:py-28 bg-paper-2/60">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          no="04"
-          label="Galeri"
-          title="Catatan dari lapangan"
-          subtitle="Dokumentasi kegiatan tim selama di Coblong."
+    <div
+      data-dark
+      role="dialog"
+      aria-modal="true"
+      aria-label={item.title}
+      onClick={onClose}
+      className="lightbox fixed inset-0 z-[100] bg-ink/95 backdrop-blur-sm flex flex-col"
+    >
+      <div className="flex items-center justify-between px-4 sm:px-6 h-16 text-white/80 text-sm">
+        <span className="tabular-nums">{String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>
+        <button onClick={onClose} aria-label="Tutup" className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+          <FontAwesomeIcon icon={faXmark} />
+        </button>
+      </div>
+
+      <div className="relative flex-1 min-h-0 flex items-center justify-center px-4 sm:px-20">
+        <img
+          key={item.src}
+          src={item.src}
+          alt={item.title}
+          onClick={(e) => e.stopPropagation()}
+          className="lightbox-img max-w-full max-h-full object-contain rounded-md shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
         />
-
-        <div className="flex flex-wrap gap-x-5 gap-y-2 mb-8 text-sm">
-          {GALLERY_FILTERS.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setFilter(key)}
-              className={filter === key ? 'text-ink underline underline-offset-4' : 'text-muted hover:text-ink'}
-            >
-              {label} <span className="text-muted">({countOf(key)})</span>
+        {items.length > 1 && (
+          <>
+            <button onClick={(e) => { e.stopPropagation(); onNav(-1); }} aria-label="Foto sebelumnya" className={`${navBtn} left-3 sm:left-6`}>
+              <FontAwesomeIcon icon={faArrowRight} className="rotate-180" />
             </button>
-          ))}
-        </div>
+            <button onClick={(e) => { e.stopPropagation(); onNav(1); }} aria-label="Foto berikutnya" className={`${navBtn} right-3 sm:right-6`}>
+              <FontAwesomeIcon icon={faArrowRight} />
+            </button>
+          </>
+        )}
+      </div>
 
+      <div className="px-4 sm:px-6 py-5 text-center" onClick={(e) => e.stopPropagation()}>
+        <p className="font-heading text-lg text-white">{item.title}</p>
+        <p className="mt-1 text-sm text-white/60">{item.location}</p>
+      </div>
+    </div>
+  );
+}
+
+function GalleryGrid({ limit, layout = 'classic' }) {
+  const [filter, setFilter] = useState('semua');
+  const [openIdx, setOpenIdx] = useState(null);
+  const matches = filter === 'semua' ? GALLERY_ITEMS : GALLERY_ITEMS.filter((i) => i.category === filter);
+  const filtered = limit ? matches.slice(0, limit) : matches;
+  const countOf = (key) => (key === 'semua' ? GALLERY_ITEMS.length : GALLERY_ITEMS.filter((i) => i.category === key).length);
+  const masonry = layout === 'masonry';
+
+  const close = useCallback(() => setOpenIdx(null), []);
+  const nav = useCallback((d) => setOpenIdx((i) => (i + d + filtered.length) % filtered.length), [filtered.length]);
+
+  return (
+    <>
+      <div className={`flex flex-wrap mb-8 text-sm ${masonry ? 'gap-2' : 'gap-x-5 gap-y-2'}`}>
+        {GALLERY_FILTERS.map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setFilter(key)}
+            className={
+              masonry
+                ? `px-4 py-2 rounded-full border transition-colors ${filter === key ? 'bg-ink border-ink text-white' : 'border-line text-muted hover:text-ink hover:border-ink/30'}`
+                : filter === key ? 'text-ink underline underline-offset-4' : 'text-muted hover:text-ink'
+            }
+          >
+            {label} <span className={masonry && filter === key ? 'text-white/60' : 'text-muted'}>({countOf(key)})</span>
+          </button>
+        ))}
+      </div>
+
+      {masonry ? (
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-3 sm:gap-4">
+          {filtered.map((item, idx) => {
+            const cat = GALLERY_FILTERS.find((f) => f.key === item.category)?.label;
+            return (
+              <figure
+                key={item.title}
+                data-cursor="Lihat"
+                onClick={() => setOpenIdx(idx)}
+                className="group relative mb-3 sm:mb-4 break-inside-avoid overflow-hidden rounded-2xl bg-paper-2 cursor-pointer"
+              >
+                <img
+                  src={item.src}
+                  alt={item.title}
+                  className="block w-full h-auto transition-[filter] duration-500 group-hover:brightness-[0.78]"
+                  loading="lazy"
+                />
+                <span className="absolute left-3 top-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur text-[10px] font-medium uppercase tracking-[0.14em] text-ink lg:opacity-0 lg:-translate-y-1 transition-all duration-500 lg:group-hover:opacity-100 lg:group-hover:translate-y-0">
+                  {cat}
+                </span>
+                <figcaption className="absolute inset-x-0 bottom-0 p-3 sm:p-4 pt-12 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent text-white lg:opacity-0 lg:translate-y-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:group-hover:opacity-100 lg:group-hover:translate-y-0">
+                  <span className="block text-xs sm:text-sm leading-snug">{item.title}</span>
+                  <span className="hidden sm:block text-[11px] text-white/70 mt-0.5">{item.location}</span>
+                </figcaption>
+              </figure>
+            );
+          })}
+        </div>
+      ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
           {filtered.map((item, idx) => {
             const featured = idx === 0 && filtered.length > 2;
             return (
-              <figure key={item.title} data-cursor="Lihat" className={featured ? 'col-span-2 row-span-2' : ''}>
+              <figure key={item.title} data-cursor="Lihat" onClick={() => setOpenIdx(idx)} className={featured ? 'col-span-2 row-span-2' : ''}>
                 <div className={`overflow-hidden rounded-sm bg-paper-2 ${featured ? 'aspect-[4/3] lg:aspect-auto lg:h-[calc(100%-3.5rem)]' : 'aspect-[4/3]'}`}>
                   <img src={item.src} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
                 </div>
@@ -447,8 +594,82 @@ function GallerySection() {
             );
           })}
         </div>
+      )}
+
+      {openIdx !== null && filtered[openIdx] && <Lightbox items={filtered} index={openIdx} onClose={close} onNav={nav} />}
+    </>
+  );
+}
+
+function GallerySection() {
+  return (
+    <section id="galeri" className="py-20 md:py-28 bg-paper-2/60">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          no="04"
+          label="Galeri"
+          title="Catatan dari lapangan"
+          subtitle="Dokumentasi kegiatan tim selama di Coblong."
+        />
+
+        <GalleryGrid limit={HOME_GALLERY_LIMIT} />
+
+        <div className="mt-12 flex justify-center">
+          <a
+            href="/galeri"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-ink hover:bg-moss text-white text-sm rounded-full transition-colors"
+          >
+            Lihat semua foto ({GALLERY_ITEMS.length})
+            <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+          </a>
+        </div>
       </div>
     </section>
+  );
+}
+
+/* ── Halaman /galeri ── */
+
+function GalleryPage() {
+  useEffect(() => {
+    document.title = 'Galeri | Kelompok Lebak Siliwangi 2 - KKN Berdampak UNIKOM 2026';
+  }, []);
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <CustomCursor />
+      <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-xl border-b border-line">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
+          <a href="/" className="flex items-center gap-2.5 shrink-0">
+            <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-9 h-9 rounded-full bg-white object-contain" />
+            <span className="leading-tight">
+              <span className="block font-heading font-semibold text-[15px] tracking-tight">KKN Lebak Siliwangi 2</span>
+              <span className="block text-[11px] text-muted">UNIKOM 2026</span>
+            </span>
+          </a>
+          <a href="/#galeri" className="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full bg-paper-2 hover:bg-line transition-colors">
+            <FontAwesomeIcon icon={faArrowRight} className="text-xs rotate-180" />
+            Kembali ke beranda
+          </a>
+        </div>
+      </header>
+
+      <main className="flex-1 py-16 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            no="04"
+            label="Galeri"
+            title="Semua dokumentasi kegiatan"
+            subtitle={`${GALLERY_ITEMS.length} foto kegiatan Lebak Siliwangi 2 bersama warga RW 05 dan RW 07, Kelurahan Lebak Siliwangi.`}
+          />
+          <GalleryGrid layout="masonry" />
+        </div>
+      </main>
+
+      <footer className="border-t border-line py-6 text-xs text-muted">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">{FOOTER_INFO.copyright}</div>
+      </footer>
+    </div>
   );
 }
 
@@ -568,18 +789,8 @@ function Footer() {
   return (
     <footer id="kontak" className="bg-moss-dark text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Ajakan */}
-        <div className="py-14 md:py-16 border-b border-white/10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-          <div>
-            <h2 className="text-3xl sm:text-4xl leading-tight">Mampir ke posko kami.</h2>
-            <p className="mt-3 max-w-lg text-white/65 leading-relaxed">
-              Mau setor sampah pilahan, ikut kerja bakti, atau ngobrol soal program? Datang langsung ke posko kami di Lebak Siliwangi.
-            </p>
-          </div>
-        </div>
-
         {/* Kolom informasi */}
-        <div className="py-14 grid grid-cols-2 md:grid-cols-12 gap-10 md:gap-8">
+        <div className="py-14 md:py-16 grid grid-cols-2 md:grid-cols-12 gap-10 md:gap-8">
           <div className="col-span-2 md:col-span-4">
             <div className="flex items-center gap-3">
               <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-12 h-12 rounded-full bg-white object-contain" />
@@ -670,13 +881,23 @@ function Footer() {
   );
 }
 
+const isGalleryRoute = () => window.location.pathname.replace(/\/+$/, '') === '/galeri';
+
 export default function App() {
+  // Datang dari /galeri lewat link "/#galeri": gulir ke section setelah halaman tampil
+  useEffect(() => {
+    if (window.location.hash) document.querySelector(window.location.hash)?.scrollIntoView();
+  }, []);
+
+  if (isGalleryRoute()) return <GalleryPage />;
+
   return (
     <div className="min-h-screen">
       <CustomCursor />
       <Navbar />
       <main>
         <HeroSection />
+        <ActivityMarquee />
         <AboutSection />
         <ProgramSection />
         <LocationSection />
