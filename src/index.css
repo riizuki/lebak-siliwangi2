@@ -116,3 +116,20 @@ h1, h2, h3, h4 {
     animation-duration: 240s;
   }
 }
+
+/* Tinggi dasar baris galeri justified; foto melebar/menyempit sesuai rasio aslinya */
+.justified-gallery {
+  --row-h: 105px;
+}
+
+@media (min-width: 640px) {
+  .justified-gallery {
+    --row-h: 150px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .justified-gallery {
+    --row-h: 200px;
+  }
+}

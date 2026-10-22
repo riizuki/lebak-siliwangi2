@@ -526,56 +526,68 @@ function GalleryGrid({ limit, layout = 'classic' }) {
   const matches = filter === 'semua' ? GALLERY_ITEMS : GALLERY_ITEMS.filter((i) => i.category === filter);
   const filtered = limit ? matches.slice(0, limit) : matches;
   const countOf = (key) => (key === 'semua' ? GALLERY_ITEMS.length : GALLERY_ITEMS.filter((i) => i.category === key).length);
-  const masonry = layout === 'masonry';
+  const justified = layout === 'justified';
+  // Rasio asli tiap foto (dibaca saat foto selesai dimuat) untuk tata letak justified
+  const [ratios, setRatios] = useState({});
 
   const close = useCallback(() => setOpenIdx(null), []);
   const nav = useCallback((d) => setOpenIdx((i) => (i + d + filtered.length) % filtered.length), [filtered.length]);
 
   return (
     <>
-      <div className={`flex flex-wrap mb-8 text-sm ${masonry ? 'gap-2' : 'gap-x-5 gap-y-2'}`}>
+      <div className={`flex flex-wrap mb-8 text-sm ${justified ? 'gap-2' : 'gap-x-5 gap-y-2'}`}>
         {GALLERY_FILTERS.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => setFilter(key)}
             className={
-              masonry
+              justified
                 ? `px-4 py-2 rounded-full border transition-colors ${filter === key ? 'bg-ink border-ink text-white' : 'border-line text-muted hover:text-ink hover:border-ink/30'}`
                 : filter === key ? 'text-ink underline underline-offset-4' : 'text-muted hover:text-ink'
             }
           >
-            {label} <span className={masonry && filter === key ? 'text-white/60' : 'text-muted'}>({countOf(key)})</span>
+            {label} <span className={justified && filter === key ? 'text-white/60' : 'text-muted'}>({countOf(key)})</span>
           </button>
         ))}
       </div>
 
-      {masonry ? (
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-3 sm:gap-4">
+      {justified ? (
+        <div className="justified-gallery flex flex-wrap gap-2.5 sm:gap-3.5">
           {filtered.map((item, idx) => {
             const cat = GALLERY_FILTERS.find((f) => f.key === item.category)?.label;
+            const ratio = ratios[item.src] || 1.5;
+            const scale = idx % 7 === 0 ? 1.8 : 1; // tiap 7 foto, satu tampil lebih besar
             return (
               <figure
                 key={item.title}
                 data-cursor="Lihat"
                 onClick={() => setOpenIdx(idx)}
-                className="group relative mb-3 sm:mb-4 break-inside-avoid overflow-hidden rounded-2xl bg-paper-2 cursor-pointer"
+                style={{ flexGrow: ratio * scale, flexBasis: `calc(var(--row-h) * ${ratio * scale})` }}
+                className="group relative overflow-hidden rounded-[18px] sm:rounded-3xl bg-paper-2 cursor-pointer"
               >
+                <div style={{ paddingBottom: `${100 / (ratio * scale)}%` }} />
                 <img
                   src={item.src}
                   alt={item.title}
-                  className="block w-full h-auto transition-[filter] duration-500 group-hover:brightness-[0.78]"
+                  onLoad={(e) => {
+                    const r = e.currentTarget.naturalWidth / e.currentTarget.naturalHeight;
+                    setRatios((prev) => (prev[item.src] === r ? prev : { ...prev, [item.src]: r }));
+                  }}
+                  className="absolute inset-0 w-full h-full object-cover object-[center_35%] transition-[filter] duration-500 group-hover:brightness-[0.78]"
                   loading="lazy"
                 />
-                <span className="absolute left-3 top-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur text-[10px] font-medium uppercase tracking-[0.14em] text-ink lg:opacity-0 lg:-translate-y-1 transition-all duration-500 lg:group-hover:opacity-100 lg:group-hover:translate-y-0">
+                <span className="absolute left-3 top-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur text-[10px] font-medium uppercase tracking-[0.14em] text-ink opacity-0 -translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
                   {cat}
                 </span>
-                <figcaption className="absolute inset-x-0 bottom-0 p-3 sm:p-4 pt-12 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent text-white lg:opacity-0 lg:translate-y-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:group-hover:opacity-100 lg:group-hover:translate-y-0">
+                <figcaption className="absolute inset-x-0 bottom-0 p-3 sm:p-4 pt-12 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent text-white opacity-0 translate-y-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0">
                   <span className="block text-xs sm:text-sm leading-snug">{item.title}</span>
                   <span className="hidden sm:block text-[11px] text-white/70 mt-0.5">{item.location}</span>
                 </figcaption>
               </figure>
             );
           })}
+          {/* Penahan supaya foto di baris terakhir tidak melebar berlebihan */}
+          <div aria-hidden="true" className="grow-[10]" />
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
@@ -647,9 +659,9 @@ function GalleryPage() {
               <span className="block text-[11px] text-muted">UNIKOM 2026</span>
             </span>
           </a>
-          <a href="/#galeri" className="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full bg-paper-2 hover:bg-line transition-colors">
+          <a href="/#galeri" className="shrink-0 inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full bg-paper-2 hover:bg-line transition-colors">
             <FontAwesomeIcon icon={faArrowRight} className="text-xs rotate-180" />
-            Kembali ke beranda
+            <span><span className="hidden sm:inline">Kembali ke </span>Beranda</span>
           </a>
         </div>
       </header>
@@ -662,7 +674,7 @@ function GalleryPage() {
             title="Semua dokumentasi kegiatan"
             subtitle={`${GALLERY_ITEMS.length} foto kegiatan Lebak Siliwangi 2 bersama warga RW 05 dan RW 07, Kelurahan Lebak Siliwangi.`}
           />
-          <GalleryGrid layout="masonry" />
+          <GalleryGrid layout="justified" />
         </div>
       </main>
 
@@ -678,6 +690,7 @@ function GalleryPage() {
 const TIMELINE_START = new Date('2026-09-01');
 const TIMELINE_END = new Date('2026-10-31');
 const toPct = (d) => ((new Date(d) - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
+const fmtDay = (d) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 
 function SummarySection() {
   const done = PROGRAMS.filter((p) => p.status === 'selesai').length;
@@ -728,19 +741,31 @@ function SummarySection() {
               </div>
             </div>
 
-            <ul className="space-y-4 sm:space-y-3">
+            {/* Sumbu bulan versi mobile */}
+            <div className="sm:hidden relative h-5 mb-2 text-[11px] text-muted">
+              <span className="absolute left-0">Sep</span>
+              <span className="absolute left-1/2 pl-1.5 border-l border-line">Okt</span>
+            </div>
+
+            <ul className="space-y-5 sm:space-y-3">
               {PROGRAMS.map((p) => {
                 const left = toPct(p.start);
                 const width = Math.max(toPct(p.end) - left, 2);
                 return (
                   <li key={p.id} className="sm:grid grid-cols-[38%_1fr] items-center gap-0">
-                    <p className="text-sm pr-6 mb-1.5 sm:mb-0">
-                      <span className="text-clay mr-2">{p.id}</span>
-                      {p.title}
-                    </p>
-                    <div className="relative h-7 rounded-full bg-paper-2">
+                    <div className="flex items-start justify-between gap-3 mb-2 sm:mb-0 sm:block">
+                      <p className="text-sm sm:pr-6 leading-snug sm:leading-5">
+                        <span className="text-clay mr-2">{p.id}</span>
+                        {p.title}
+                      </p>
+                      <span className="sm:hidden shrink-0 text-[11px] text-muted tabular-nums pt-0.5">
+                        {fmtDay(p.start)} – {fmtDay(p.end)}
+                      </span>
+                    </div>
+                    <div className="relative h-2.5 sm:h-7 rounded-full bg-paper-2">
+                      <span className="sm:hidden absolute left-1/2 -top-1 -bottom-1 w-px bg-line" />
                       <span
-                        className={`absolute top-1 bottom-1 rounded-full ${p.status === 'selesai' ? 'bg-moss' : 'bg-clay'}`}
+                        className={`absolute inset-y-0 sm:top-1 sm:bottom-1 min-w-2.5 sm:min-w-0 rounded-full ${p.status === 'selesai' ? 'bg-moss' : 'bg-clay'}`}
                         style={{ left: `${left}%`, width: `${width}%` }}
                       />
                     </div>
