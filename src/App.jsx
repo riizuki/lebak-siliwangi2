@@ -2,21 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars, faXmark, faArrowRight, faArrowUp, faArrowUpRightFromSquare,
-  faLocationDot, faGlobe
+  faLocationDot, faGlobe, faSun, faMoon
 } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 
-import {
-  NAV_LINKS,
-  HERO_CONTENT,
-  TEAM_MEMBERS,
-  PROGRAMS,
-  GALLERY_FILTERS,
-  GALLERY_ITEMS,
-  LOCATIONS,
-  DIVISION_OUTCOMES,
-  FOOTER_INFO,
-} from './data/kknData';
+import { usePrefs } from './preferences';
 import CustomCursor from './components/CustomCursor';
 
 const scrollTo = (e, href) => {
@@ -40,9 +30,53 @@ function SectionHeader({ no, label, title, subtitle }) {
   );
 }
 
+/* ── Tombol bahasa & mode tampilan ── */
+
+function SiteControls({ solid = true }) {
+  const { lang, setLang, theme, toggleTheme, t } = usePrefs();
+  const dark = theme === 'dark';
+
+  return (
+    <div className="flex items-center gap-2 shrink-0">
+      <div
+        role="group"
+        aria-label={t.language}
+        className={`flex items-center rounded-full p-1 text-xs font-medium transition-colors ${solid ? 'bg-paper-2' : 'bg-white/10 backdrop-blur-md'}`}
+      >
+        {['id', 'en'].map((code) => (
+          <button
+            key={code}
+            onClick={() => setLang(code)}
+            aria-pressed={lang === code}
+            className={`px-2.5 py-1 rounded-full uppercase tracking-wide transition-colors ${
+              lang === code
+                ? solid ? 'bg-paper text-ink shadow-sm' : 'bg-white/25 text-white'
+                : solid ? 'text-muted hover:text-ink' : 'text-white/70 hover:text-white'
+            }`}
+          >
+            {code}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={toggleTheme}
+        aria-label={dark ? t.toLight : t.toDark}
+        title={dark ? t.toLight : t.toDark}
+        className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+          solid ? 'bg-paper-2 text-ink hover:bg-line' : 'bg-white/10 backdrop-blur-md text-white hover:bg-white/20'
+        }`}
+      >
+        <FontAwesomeIcon icon={dark ? faSun : faMoon} className="text-sm" />
+      </button>
+    </div>
+  );
+}
+
 /* ── Navbar ── */
 
 function Navbar() {
+  const { NAV_LINKS, t } = usePrefs();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState('#beranda');
@@ -63,7 +97,7 @@ function Navbar() {
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [NAV_LINKS]);
 
   const handleClick = (e, href) => {
     setIsOpen(false);
@@ -77,15 +111,15 @@ function Navbar() {
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         solid
-          ? 'bg-white/85 backdrop-blur-xl border-b border-line shadow-[0_1px_12px_rgba(16,24,20,0.04)] text-ink'
+          ? 'bg-paper/85 backdrop-blur-xl border-b border-line shadow-[0_1px_12px_rgba(16,24,20,0.04)] text-ink'
           : 'bg-transparent border-b border-transparent text-white'
       }`}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
-        <a href="#beranda" onClick={(e) => handleClick(e, '#beranda')} className="flex items-center gap-2.5 shrink-0">
-          <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-9 h-9 rounded-full bg-white object-contain" />
-          <span className="leading-tight">
-            <span className="block font-heading font-semibold text-[15px] tracking-tight">KKN Lebak Siliwangi 2</span>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-6">
+        <a href="#beranda" onClick={(e) => handleClick(e, '#beranda')} className="flex items-center gap-2.5 min-w-0">
+          <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-9 h-9 rounded-full bg-white object-contain shrink-0" />
+          <span className="leading-tight min-w-0">
+            <span className="block font-heading font-semibold text-[15px] tracking-tight truncate">KKN Lebak Siliwangi 2</span>
             <span className={`block text-[11px] ${solid ? 'text-muted' : 'text-white/70'}`}>UNIKOM 2026</span>
           </span>
         </a>
@@ -104,7 +138,7 @@ function Navbar() {
                 onClick={(e) => handleClick(e, href)}
                 className={`px-3.5 py-1.5 rounded-full transition-colors ${
                   isActive
-                    ? solid ? 'bg-white text-ink shadow-sm' : 'bg-white/20 text-white'
+                    ? solid ? 'bg-paper text-ink shadow-sm' : 'bg-white/20 text-white'
                     : solid ? 'text-muted hover:text-ink' : 'text-white/80 hover:text-white'
                 }`}
               >
@@ -114,28 +148,21 @@ function Navbar() {
           })}
         </nav>
 
-        <a
-          href="#kontak"
-          onClick={(e) => handleClick(e, '#kontak')}
-          className={`hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            solid ? 'bg-ink text-white hover:bg-moss' : 'bg-white text-ink hover:bg-white/90'
-          }`}
-        >
-          Kontak
-          <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />
-        </a>
+        <div className="flex items-center gap-2">
+          <SiteControls solid={solid} />
 
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`lg:hidden w-10 h-10 -mr-1 flex items-center justify-center rounded-full ${solid ? 'bg-paper-2' : 'bg-white/15'}`}
-          aria-label="Menu"
-        >
-          <FontAwesomeIcon icon={isOpen ? faXmark : faBars} />
-        </button>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`lg:hidden w-10 h-10 -mr-1 flex items-center justify-center rounded-full ${solid ? 'bg-paper-2' : 'bg-white/15'}`}
+            aria-label={t.menu}
+          >
+            <FontAwesomeIcon icon={isOpen ? faXmark : faBars} />
+          </button>
+        </div>
       </div>
 
       {isOpen && (
-        <nav className="lg:hidden bg-white border-t border-line px-4 sm:px-6 py-3 space-y-1">
+        <nav className="lg:hidden bg-paper border-t border-line px-4 sm:px-6 py-3 space-y-1">
           {NAV_LINKS.map(({ label, href }) => (
             <a
               key={href}
@@ -155,17 +182,18 @@ function Navbar() {
 /* ── Hero ── */
 
 function HeroSection() {
+  const { HERO_CONTENT, TEAM_MEMBERS, t } = usePrefs();
   const facts = [
-    ['Lokasi', 'Lebak Siliwangi · RW 05 & RW 07'],
-    ['Fokus', 'Sampah & lingkungan'],
-    ['Tim', `${TEAM_MEMBERS.length} mahasiswa`],
+    [t.factLocation, 'Lebak Siliwangi · RW 05 & RW 07'],
+    [t.factFocus, t.factFocusValue],
+    [t.factTeam, t.students(TEAM_MEMBERS.length)],
   ];
 
   return (
-    <section id="beranda" className="relative min-h-[100svh] flex flex-col justify-end bg-ink text-white overflow-hidden">
+    <section id="beranda" className="relative min-h-[100svh] flex flex-col justify-end bg-night text-white overflow-hidden">
       <img
         src={HERO_CONTENT.poskoImage}
-        alt="Kegiatan budidaya maggot bersama warga Kelurahan Lebak Siliwangi"
+        alt={t.heroAlt}
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
@@ -205,6 +233,7 @@ function HeroSection() {
 /* ── Foto kegiatan berjalan (infinite marquee) ── */
 
 function MarqueeRow({ items, reverse, duration }) {
+  const { t } = usePrefs();
   // Daftar digandakan supaya animasi geser -50% menyambung tanpa jeda
   return (
     <div className="marquee-track overflow-hidden">
@@ -213,14 +242,14 @@ function MarqueeRow({ items, reverse, duration }) {
           <a
             key={i}
             href="/galeri"
-            data-cursor="Galeri"
+            data-cursor={t.cursorGallery}
             aria-hidden={i >= items.length}
             tabIndex={i >= items.length ? -1 : undefined}
             className="group relative shrink-0 pr-3 sm:pr-4"
           >
             <div className="relative w-48 h-36 sm:w-64 sm:h-48 lg:w-[300px] lg:h-56 overflow-hidden rounded-2xl bg-paper-2">
               <img src={item.src} alt={item.title} className="w-full h-full object-cover object-[center_35%] transition-[filter] duration-500 group-hover:brightness-[0.8]" loading="lazy" />
-              <span className="absolute inset-x-0 bottom-0 p-3 pt-10 bg-gradient-to-t from-ink/80 to-transparent text-white text-xs leading-snug opacity-0 translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+              <span className="absolute inset-x-0 bottom-0 p-3 pt-10 bg-gradient-to-t from-night/80 to-transparent text-white text-xs leading-snug opacity-0 translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
                 {item.title}
               </span>
             </div>
@@ -232,15 +261,16 @@ function MarqueeRow({ items, reverse, duration }) {
 }
 
 function ActivityMarquee() {
+  const { GALLERY_ITEMS, t } = usePrefs();
   const half = Math.ceil(GALLERY_ITEMS.length / 2);
   return (
-    <section id="dokumentasi" aria-label="Foto kegiatan" className="py-14 md:py-20 overflow-hidden">
+    <section id="dokumentasi" aria-label={t.marqueeLabel} className="py-14 md:py-20 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 flex items-end justify-between gap-6">
         <p className="text-sm text-muted max-w-md">
-          <span className="text-ink font-medium">Sepanjang KKN</span> · kerja bakti, bank sampah, maggot, sampai sosialisasi bersama warga.
+          <span className="text-ink font-medium">{t.marqueeLead}</span>{t.marqueeText}
         </p>
         <a href="/galeri" className="shrink-0 inline-flex items-center gap-2 text-sm text-ink border-b border-ink/30 hover:border-ink pb-0.5 transition-colors">
-          Lihat galeri
+          {t.viewGallery}
           <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
         </a>
       </div>
@@ -281,10 +311,11 @@ function Person({ m, role }) {
 }
 
 function AboutSection() {
+  const { TEAM_MEMBERS, t } = usePrefs();
   const [ketua, sekretaris, bendahara] = TEAM_MEMBERS;
   const divisions = [
-    { name: 'Divisi Acara', note: 'Acara & lapangan', members: TEAM_MEMBERS.slice(3, 6) },
-    { name: 'Divisi Medinfo & Humas', note: 'Media & informasi', members: TEAM_MEMBERS.slice(6, 11) },
+    { name: t.divEvents, note: t.divEventsNote, members: TEAM_MEMBERS.slice(3, 6) },
+    { name: t.divMedia, note: t.divMediaNote, members: TEAM_MEMBERS.slice(6, 11) },
   ];
 
   return (
@@ -292,22 +323,22 @@ function AboutSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           no="01"
-          label="Struktur Tim"
+          label={t.teamLabel}
           title="Lebak Siliwangi 2"
-          subtitle="Sebelas mahasiswa UNIKOM dari berbagai jurusan yang tinggal dan bekerja bersama warga Coblong selama masa KKN."
+          subtitle={t.teamSubtitle}
         />
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
-          <Person m={ketua} role="Ketua" />
-          <Person m={sekretaris} role="Sekretaris" />
-          <Person m={bendahara} role="Bendahara" />
+          <Person m={ketua} role={t.roleLeader} />
+          <Person m={sekretaris} role={t.roleSecretary} />
+          <Person m={bendahara} role={t.roleTreasurer} />
         </div>
 
         {divisions.map((d) => (
           <div key={d.name} className="mt-20">
             <div className="flex items-baseline justify-between border-b border-line pb-3 mb-6">
               <h3 className="text-2xl">{d.name}</h3>
-              <span className="text-sm text-muted">{d.note} · {d.members.length} orang</span>
+              <span className="text-sm text-muted">{d.note} · {t.people(d.members.length)}</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6">
               {d.members.map((m) => <Person key={m.name} m={m} />)}
@@ -322,20 +353,21 @@ function AboutSection() {
 /* ── Program Kerja ── */
 
 const STATUS = {
-  selesai: { label: 'Selesai', cls: 'bg-moss text-white' },
-  berjalan: { label: 'Berjalan', cls: 'bg-clay/15 text-moss' },
-  rencana: { label: 'Rencana', cls: 'bg-paper-2 text-muted border border-line' },
+  selesai: { key: 'statusDone', cls: 'bg-moss text-white' },
+  berjalan: { key: 'statusOngoing', cls: 'bg-clay/15 text-moss' },
+  rencana: { key: 'statusPlanned', cls: 'bg-paper-2 text-muted border border-line' },
 };
 
 function ProgramSection() {
+  const { PROGRAMS, t } = usePrefs();
   return (
     <section id="proker" className="py-20 md:py-28 bg-paper-2/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           no="02"
-          label="Program Kerja"
-          title="Empat program kerja"
-          subtitle="Dari menghidupkan bank sampah sampai membuat alat sendiri untuk mengolah sampah warga RW 05 dan RW 07."
+          label={t.programLabel}
+          title={t.programTitle}
+          subtitle={t.programSubtitle}
         />
 
         <ol className="divide-y divide-line border-y border-line">
@@ -351,13 +383,13 @@ function ProgramSection() {
                 </div>
                 <dl className="md:col-span-4 md:pl-6 md:border-l border-line text-sm space-y-3 md:pt-6">
                   <div>
-                    <dt className="text-muted text-xs mb-0.5">Waktu</dt>
+                    <dt className="text-muted text-xs mb-0.5">{t.time}</dt>
                     <dd>{prog.date}</dd>
                   </div>
                   <div>
-                    <dt className="text-muted text-xs mb-1">Status</dt>
+                    <dt className="text-muted text-xs mb-1">{t.status}</dt>
                     <dd>
-                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${st.cls}`}>{st.label}</span>
+                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${st.cls}`}>{t[st.key]}</span>
                     </dd>
                   </div>
                 </dl>
@@ -376,12 +408,13 @@ const mapsEmbed = (q) => `https://maps.google.com/maps?q=${encodeURIComponent(q)
 const mapsLink = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 
 function LocationSection() {
+  const { LOCATIONS, t } = usePrefs();
   const [selectedId, setSelectedId] = useState(LOCATIONS[0].id);
   const loc = LOCATIONS.find((l) => l.id === selectedId) || LOCATIONS[0];
   const details = [
-    ['Alamat', loc.address],
-    ['Buka', loc.hours],
-    ['Kontak', loc.contact],
+    [t.address, loc.address],
+    [t.hours, loc.hours],
+    [t.contact, loc.contact],
   ].filter(([, v]) => v);
 
   return (
@@ -389,9 +422,9 @@ function LocationSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           no="03"
-          label="Lokasi"
-          title="Titik-titik kegiatan kami"
-          subtitle="Posko tim sekaligus bank sampah, dan kantor kelurahan yang jadi mitra kami."
+          label={t.locationLabel}
+          title={t.locationTitle}
+          subtitle={t.locationSubtitle}
         />
 
         <div className="flex gap-6 overflow-x-auto border-b border-line mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -412,7 +445,7 @@ function LocationSection() {
           <div className="lg:col-span-7 h-[340px] sm:h-[440px] bg-paper-2 rounded-xl overflow-hidden">
             <iframe
               key={loc.id}
-              title={`Peta ${loc.name}`}
+              title={t.mapOf(loc.name)}
               src={mapsEmbed(loc.query)}
               className="w-full h-full border-0"
               allowFullScreen=""
@@ -441,7 +474,7 @@ function LocationSection() {
               rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2 px-5 py-3 bg-moss hover:bg-moss-dark text-white text-sm rounded-full transition-colors"
             >
-              Buka rute di Google Maps
+              {t.openRoute}
               <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-xs" />
             </a>
           </div>
@@ -457,6 +490,7 @@ function LocationSection() {
 const HOME_GALLERY_LIMIT = 13;
 
 function Lightbox({ items, index, onClose, onNav }) {
+  const { t } = usePrefs();
   const item = items[index];
 
   useEffect(() => {
@@ -483,11 +517,11 @@ function Lightbox({ items, index, onClose, onNav }) {
       aria-modal="true"
       aria-label={item.title}
       onClick={onClose}
-      className="lightbox fixed inset-0 z-[100] bg-ink/95 backdrop-blur-sm flex flex-col"
+      className="lightbox fixed inset-0 z-[100] bg-night/95 backdrop-blur-sm flex flex-col"
     >
       <div className="flex items-center justify-between px-4 sm:px-6 h-16 text-white/80 text-sm">
         <span className="tabular-nums">{String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>
-        <button onClick={onClose} aria-label="Tutup" className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+        <button onClick={onClose} aria-label={t.close} className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
           <FontAwesomeIcon icon={faXmark} />
         </button>
       </div>
@@ -502,10 +536,10 @@ function Lightbox({ items, index, onClose, onNav }) {
         />
         {items.length > 1 && (
           <>
-            <button onClick={(e) => { e.stopPropagation(); onNav(-1); }} aria-label="Foto sebelumnya" className={`${navBtn} left-3 sm:left-6`}>
+            <button onClick={(e) => { e.stopPropagation(); onNav(-1); }} aria-label={t.prevPhoto} className={`${navBtn} left-3 sm:left-6`}>
               <FontAwesomeIcon icon={faArrowRight} className="rotate-180" />
             </button>
-            <button onClick={(e) => { e.stopPropagation(); onNav(1); }} aria-label="Foto berikutnya" className={`${navBtn} right-3 sm:right-6`}>
+            <button onClick={(e) => { e.stopPropagation(); onNav(1); }} aria-label={t.nextPhoto} className={`${navBtn} right-3 sm:right-6`}>
               <FontAwesomeIcon icon={faArrowRight} />
             </button>
           </>
@@ -521,6 +555,7 @@ function Lightbox({ items, index, onClose, onNav }) {
 }
 
 function GalleryGrid({ limit, layout = 'classic' }) {
+  const { GALLERY_ITEMS, GALLERY_FILTERS, t } = usePrefs();
   const [filter, setFilter] = useState('semua');
   const [openIdx, setOpenIdx] = useState(null);
   const matches = filter === 'semua' ? GALLERY_ITEMS : GALLERY_ITEMS.filter((i) => i.category === filter);
@@ -542,11 +577,11 @@ function GalleryGrid({ limit, layout = 'classic' }) {
             onClick={() => setFilter(key)}
             className={
               justified
-                ? `px-4 py-2 rounded-full border transition-colors ${filter === key ? 'bg-ink border-ink text-white' : 'border-line text-muted hover:text-ink hover:border-ink/30'}`
+                ? `px-4 py-2 rounded-full border transition-colors ${filter === key ? 'bg-ink border-ink text-paper' : 'border-line text-muted hover:text-ink hover:border-ink/30'}`
                 : filter === key ? 'text-ink underline underline-offset-4' : 'text-muted hover:text-ink'
             }
           >
-            {label} <span className={justified && filter === key ? 'text-white/60' : 'text-muted'}>({countOf(key)})</span>
+            {label} <span className={justified && filter === key ? 'text-paper/60' : 'text-muted'}>({countOf(key)})</span>
           </button>
         ))}
       </div>
@@ -559,8 +594,8 @@ function GalleryGrid({ limit, layout = 'classic' }) {
             const scale = idx % 7 === 0 ? 1.8 : 1; // tiap 7 foto, satu tampil lebih besar
             return (
               <figure
-                key={item.title}
-                data-cursor="Lihat"
+                key={item.src}
+                data-cursor={t.cursorView}
                 onClick={() => setOpenIdx(idx)}
                 style={{ flexGrow: ratio * scale, flexBasis: `calc(var(--row-h) * ${ratio * scale})` }}
                 className="group relative overflow-hidden rounded-[18px] sm:rounded-3xl bg-paper-2 cursor-pointer"
@@ -576,10 +611,10 @@ function GalleryGrid({ limit, layout = 'classic' }) {
                   className="absolute inset-0 w-full h-full object-cover object-[center_35%] transition-[filter] duration-500 group-hover:brightness-[0.78]"
                   loading="lazy"
                 />
-                <span className="absolute left-3 top-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur text-[10px] font-medium uppercase tracking-[0.14em] text-ink opacity-0 -translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+                <span className="absolute left-3 top-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur text-[10px] font-medium uppercase tracking-[0.14em] text-night opacity-0 -translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
                   {cat}
                 </span>
-                <figcaption className="absolute inset-x-0 bottom-0 p-3 sm:p-4 pt-12 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent text-white opacity-0 translate-y-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0">
+                <figcaption className="absolute inset-x-0 bottom-0 p-3 sm:p-4 pt-12 bg-gradient-to-t from-night/85 via-night/30 to-transparent text-white opacity-0 translate-y-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0">
                   <span className="block text-xs sm:text-sm leading-snug">{item.title}</span>
                   <span className="hidden sm:block text-[11px] text-white/70 mt-0.5">{item.location}</span>
                 </figcaption>
@@ -594,7 +629,7 @@ function GalleryGrid({ limit, layout = 'classic' }) {
           {filtered.map((item, idx) => {
             const featured = idx === 0 && filtered.length > 2;
             return (
-              <figure key={item.title} data-cursor="Lihat" onClick={() => setOpenIdx(idx)} className={featured ? 'col-span-2 row-span-2' : ''}>
+              <figure key={item.src} data-cursor={t.cursorView} onClick={() => setOpenIdx(idx)} className={featured ? 'col-span-2 row-span-2' : ''}>
                 <div className={`overflow-hidden rounded-sm bg-paper-2 ${featured ? 'aspect-[4/3] lg:aspect-auto lg:h-[calc(100%-3.5rem)]' : 'aspect-[4/3]'}`}>
                   <img src={item.src} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
                 </div>
@@ -614,14 +649,15 @@ function GalleryGrid({ limit, layout = 'classic' }) {
 }
 
 function GallerySection() {
+  const { GALLERY_ITEMS, t } = usePrefs();
   return (
     <section id="galeri" className="py-20 md:py-28 bg-paper-2/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           no="04"
-          label="Galeri"
-          title="Catatan dari lapangan"
-          subtitle="Dokumentasi kegiatan tim selama di Coblong."
+          label={t.galleryLabel}
+          title={t.galleryTitle}
+          subtitle={t.gallerySubtitle}
         />
 
         <GalleryGrid limit={HOME_GALLERY_LIMIT} />
@@ -629,9 +665,9 @@ function GallerySection() {
         <div className="mt-12 flex justify-center">
           <a
             href="/galeri"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-ink hover:bg-moss text-white text-sm rounded-full transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-ink hover:bg-moss text-paper hover:text-white text-sm rounded-full transition-colors"
           >
-            Lihat semua foto ({GALLERY_ITEMS.length})
+            {t.seeAllPhotos(GALLERY_ITEMS.length)}
             <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
           </a>
         </div>
@@ -643,26 +679,31 @@ function GallerySection() {
 /* ── Halaman /galeri ── */
 
 function GalleryPage() {
+  const { GALLERY_ITEMS, FOOTER_INFO, t } = usePrefs();
+
   useEffect(() => {
-    document.title = 'Galeri | Kelompok Lebak Siliwangi 2 - KKN Berdampak UNIKOM 2026';
-  }, []);
+    document.title = t.galleryMetaTitle;
+  }, [t]);
 
   return (
     <div className="min-h-screen flex flex-col">
       <CustomCursor />
-      <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-xl border-b border-line">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
-          <a href="/" className="flex items-center gap-2.5 shrink-0">
-            <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-9 h-9 rounded-full bg-white object-contain" />
-            <span className="leading-tight">
-              <span className="block font-heading font-semibold text-[15px] tracking-tight">KKN Lebak Siliwangi 2</span>
+      <header className="sticky top-0 z-50 bg-paper/85 backdrop-blur-xl border-b border-line">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-6">
+          <a href="/" className="flex items-center gap-2.5 min-w-0">
+            <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-9 h-9 rounded-full bg-white object-contain shrink-0" />
+            <span className="leading-tight min-w-0 hidden min-[420px]:block">
+              <span className="block font-heading font-semibold text-[15px] tracking-tight truncate">KKN Lebak Siliwangi 2</span>
               <span className="block text-[11px] text-muted">UNIKOM 2026</span>
             </span>
           </a>
-          <a href="/#galeri" className="shrink-0 inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full bg-paper-2 hover:bg-line transition-colors">
-            <FontAwesomeIcon icon={faArrowRight} className="text-xs rotate-180" />
-            <span><span className="hidden sm:inline">Kembali ke </span>Beranda</span>
-          </a>
+          <div className="flex items-center gap-2">
+            <SiteControls />
+            <a href="/#galeri" className="shrink-0 inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full bg-paper-2 hover:bg-line transition-colors">
+              <FontAwesomeIcon icon={faArrowRight} className="text-xs rotate-180" />
+              <span><span className="hidden sm:inline">{t.backTo}</span>{t.home}</span>
+            </a>
+          </div>
         </div>
       </header>
 
@@ -670,9 +711,9 @@ function GalleryPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             no="04"
-            label="Galeri"
-            title="Semua dokumentasi kegiatan"
-            subtitle={`${GALLERY_ITEMS.length} foto kegiatan Lebak Siliwangi 2 bersama warga RW 05 dan RW 07, Kelurahan Lebak Siliwangi.`}
+            label={t.galleryLabel}
+            title={t.galleryPageTitle}
+            subtitle={t.galleryPageSubtitle(GALLERY_ITEMS.length)}
           />
           <GalleryGrid layout="justified" />
         </div>
@@ -690,16 +731,17 @@ function GalleryPage() {
 const TIMELINE_START = new Date('2026-09-01');
 const TIMELINE_END = new Date('2026-10-31');
 const toPct = (d) => ((new Date(d) - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
-const fmtDay = (d) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+const fmtDay = (d, locale) => new Date(d).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 
 function SummarySection() {
+  const { PROGRAMS, TEAM_MEMBERS, DIVISION_OUTCOMES, t } = usePrefs();
   const done = PROGRAMS.filter((p) => p.status === 'selesai').length;
   const majors = new Set(TEAM_MEMBERS.map((m) => m.jurusan)).size;
   const stats = [
-    [PROGRAMS.length, 'Program kerja', `${done} sudah selesai`],
-    ['2', 'RW dampingan', 'RW 05 & RW 07'],
-    [TEAM_MEMBERS.length, 'Mahasiswa', `dari ${majors} program studi`],
-    ['2', 'Bulan di lapangan', 'September – Oktober 2026'],
+    [PROGRAMS.length, t.statPrograms, t.statProgramsNote(done)],
+    ['2', t.statRw, 'RW 05 & RW 07'],
+    [TEAM_MEMBERS.length, t.statStudents, t.statStudentsNote(majors)],
+    ['2', t.statMonths, t.statMonthsNote],
   ];
 
   return (
@@ -707,14 +749,14 @@ function SummarySection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           no="05"
-          label="Ringkasan"
-          title="KKN kami dalam angka"
-          subtitle="Gambaran singkat apa saja yang sudah dikerjakan Lebak Siliwangi 2 selama di lapangan."
+          label={t.summaryLabel}
+          title={t.summaryTitle}
+          subtitle={t.summarySubtitle}
         />
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line rounded-2xl overflow-hidden">
           {stats.map(([value, label, note]) => (
-            <div key={label} className="bg-white p-5 sm:p-7">
+            <div key={label} className="bg-paper p-5 sm:p-7">
               <p className="font-heading text-4xl sm:text-5xl text-moss leading-none">{value}</p>
               <p className="mt-3 font-medium">{label}</p>
               <p className="text-sm text-muted mt-0.5">{note}</p>
@@ -725,8 +767,8 @@ function SummarySection() {
         {/* Timeline proker */}
         <div className="mt-16">
           <div className="flex items-baseline justify-between border-b border-line pb-3 mb-6">
-            <h3 className="text-2xl">Linimasa program</h3>
-            <span className="text-sm text-muted">Sep – Okt 2026</span>
+            <h3 className="text-2xl">{t.timeline}</h3>
+            <span className="text-sm text-muted">{t.timelineRange}</span>
           </div>
 
           <div className="relative">
@@ -736,15 +778,15 @@ function SummarySection() {
             <div className="hidden sm:grid grid-cols-[38%_1fr] text-xs text-muted mb-3">
               <span />
               <div className="flex justify-between">
-                <span>September</span>
-                <span className="w-1/2">Oktober</span>
+                <span>{t.september}</span>
+                <span className="w-1/2">{t.october}</span>
               </div>
             </div>
 
             {/* Sumbu bulan versi mobile */}
             <div className="sm:hidden relative h-5 mb-2 text-[11px] text-muted">
-              <span className="absolute left-0">Sep</span>
-              <span className="absolute left-1/2 pl-1.5 border-l border-line">Okt</span>
+              <span className="absolute left-0">{t.sepShort}</span>
+              <span className="absolute left-1/2 pl-1.5 border-l border-line">{t.octShort}</span>
             </div>
 
             <ul className="space-y-5 sm:space-y-3">
@@ -759,7 +801,7 @@ function SummarySection() {
                         {p.title}
                       </p>
                       <span className="sm:hidden shrink-0 text-[11px] text-muted tabular-nums pt-0.5">
-                        {fmtDay(p.start)} – {fmtDay(p.end)}
+                        {fmtDay(p.start, t.dateLocale)} – {fmtDay(p.end, t.dateLocale)}
                       </span>
                     </div>
                     <div className="relative h-2.5 sm:h-7 rounded-full bg-paper-2">
@@ -775,14 +817,14 @@ function SummarySection() {
             </ul>
 
             <div className="flex gap-5 mt-5 text-xs text-muted">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-full bg-moss" />Selesai</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-full bg-clay" />Berjalan</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-full bg-moss" />{t.statusDone}</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-full bg-clay" />{t.statusOngoing}</span>
             </div>
           </div>
         </div>
 
         <div className="mt-20">
-          <h3 className="text-2xl border-b border-line pb-3">Pembagian kerja per divisi</h3>
+          <h3 className="text-2xl border-b border-line pb-3">{t.divisionWork}</h3>
           <div className="divide-y divide-line">
             {DIVISION_OUTCOMES.map((d) => (
               <div key={d.title} className="grid md:grid-cols-12 gap-2 md:gap-6 py-5 text-sm">
@@ -801,6 +843,7 @@ function SummarySection() {
 /* ── Footer ── */
 
 function Footer() {
+  const { NAV_LINKS, PROGRAMS, FOOTER_INFO, t } = usePrefs();
   const socials = [
     ['Instagram', FOOTER_INFO.instagram, faInstagram],
     ['YouTube', FOOTER_INFO.youtube, faYoutube],
@@ -825,7 +868,7 @@ function Footer() {
               </div>
             </div>
             <p className="mt-5 text-sm text-white/60 leading-relaxed max-w-sm">
-              KKN Berdampak UNIKOM 2026 di RW 05 dan RW 07, Kelurahan Lebak Siliwangi, dengan fokus pengelolaan sampah dan lingkungan.
+              {t.footerDesc}
             </p>
             <div className="mt-6 flex gap-2">
               {socials.map(([label, url, icon]) => (
@@ -835,7 +878,7 @@ function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-ink hover:bg-white hover:border-white transition-colors"
+                  className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-night hover:bg-white hover:border-white transition-colors"
                 >
                   <FontAwesomeIcon icon={icon} className="text-sm" />
                 </a>
@@ -844,7 +887,7 @@ function Footer() {
           </div>
 
           <div className="md:col-span-2 md:col-start-6">
-            <p className={heading}>Navigasi</p>
+            <p className={heading}>{t.footerNav}</p>
             <ul className="space-y-2.5 text-sm">
               {NAV_LINKS.slice(0, -1).map(({ label, href }) => (
                 <li key={href}>
@@ -857,12 +900,12 @@ function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <p className={heading}>Program</p>
+            <p className={heading}>{t.footerPrograms}</p>
             <ul className="space-y-2.5 text-sm">
               {PROGRAMS.map((p) => (
                 <li key={p.id}>
                   <a href="#proker" onClick={(e) => scrollTo(e, '#proker')} className="text-white/75 hover:text-white transition-colors">
-                    {p.title.replace(/^Pembuatan /, '').split(' bersama')[0]}
+                    {p.shortTitle}
                   </a>
                 </li>
               ))}
@@ -870,7 +913,7 @@ function Footer() {
           </div>
 
           <div className="col-span-2 md:col-span-3">
-            <p className={heading}>Alamat</p>
+            <p className={heading}>{t.footerAddress}</p>
             <ul className="space-y-3.5 text-sm">
               {contacts.map(([icon, text, href]) => (
                 <li key={text} className="flex gap-3">
@@ -897,7 +940,7 @@ function Footer() {
             onClick={(e) => scrollTo(e, '#beranda')}
             className="inline-flex items-center gap-2 hover:text-white transition-colors"
           >
-            Kembali ke atas
+            {t.backToTop}
             <FontAwesomeIcon icon={faArrowUp} className="text-[10px]" />
           </a>
         </div>
@@ -909,10 +952,16 @@ function Footer() {
 const isGalleryRoute = () => window.location.pathname.replace(/\/+$/, '') === '/galeri';
 
 export default function App() {
+  const { t } = usePrefs();
+
   // Datang dari /galeri lewat link "/#galeri": gulir ke section setelah halaman tampil
   useEffect(() => {
     if (window.location.hash) document.querySelector(window.location.hash)?.scrollIntoView();
   }, []);
+
+  useEffect(() => {
+    if (!isGalleryRoute()) document.title = t.metaTitle;
+  }, [t]);
 
   if (isGalleryRoute()) return <GalleryPage />;
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 
-const DARK_AREAS = '#beranda, #kontak, .bg-moss, .bg-moss-dark, .bg-ink, [data-dark]';
+const DARK_AREAS = '#beranda, #kontak, .bg-moss, .bg-moss-dark, .bg-night, [data-dark]';
 
 // Tombol/link yang lebih besar dari ini tidak dibungkus, cukup titik kecil
 const MAX_WRAP = { w: 320, h: 120 };
@@ -50,7 +50,8 @@ export default function CustomCursor() {
       }
 
       const el = document.elementFromPoint(e.clientX, e.clientY);
-      if (el) setIsDark(!!el.closest(DARK_AREAS));
+      // Mode gelap aktif: seluruh halaman dianggap area gelap
+      if (el) setIsDark(document.documentElement.classList.contains('dark') || !!el.closest(DARK_AREAS));
     };
 
     // Lingkaran pengikut: lerp + efek "stretch" sesuai arah dan kecepatan gerak
@@ -146,7 +147,7 @@ export default function CustomCursor() {
 
   // Putih di area gelap, hijau di area terang
   const c = isDark
-    ? { border: 'border-white', borderSoft: 'border-white/60', fill: 'bg-white', fillSoft: 'bg-white/10', text: 'text-ink', ripple: 'border-white/70' }
+    ? { border: 'border-white', borderSoft: 'border-white/60', fill: 'bg-white', fillSoft: 'bg-white/10', text: 'text-night', ripple: 'border-white/70' }
     : { border: 'border-moss', borderSoft: 'border-moss/50', fill: 'bg-moss', fillSoft: 'bg-moss/10', text: 'text-white', ripple: 'border-moss/60' };
 
   const type = hover.type;

@@ -12,6 +12,28 @@
   --color-moss: #1a5c44;
   --color-moss-dark: #0f2f24;
   --color-clay: #1f9d6b;
+  /* Selalu gelap di kedua mode: hero, lightbox, gradasi teks di atas foto */
+  --color-night: #101814;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Mode gelap: token warna yang sama diberi nilai gelap */
+.dark {
+  --color-paper: #0e1411;
+  --color-paper-2: #161e1a;
+  --color-ink: #e8eee9;
+  --color-muted: #94a39c;
+  --color-line: #26312c;
+  --color-moss: #2a8462;
+  --color-clay: #3cbf8a;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 html {
