@@ -284,7 +284,7 @@ function ProgramSection() {
         <SectionHeader
           no="02"
           label="Program Kerja"
-          title="Empat program kerja kami"
+          title="Empat program kerja"
           subtitle="Dari menghidupkan bank sampah sampai membuat alat sendiri untuk mengolah sampah warga RW 05 dan RW 07."
         />
 

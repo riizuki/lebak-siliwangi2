@@ -180,6 +180,7 @@ export const GALLERY_ITEMS = [
   { src: img('mencacah-organik'), category: 'maggot', title: 'Mengolah sampah organik bersama', location: 'Lebak Siliwangi · Okt 2026' },
   { src: img('foto-tim'), category: 'warga', title: 'Tim di lokasi bank sampah', location: 'Lebak Siliwangi · Agu 2026' },
   { src: img('maggot-closeup'), category: 'maggot', title: 'Hasil panen maggot', location: 'Lebak Siliwangi · Okt 2026' },
+  { src: img('kantor-kelurahan'), category: 'warga', title: 'Kantor Kelurahan Lebak Siliwangi, mitra koordinasi program', location: 'Lebak Siliwangi' },
 ];
 
 export const DIVISION_OUTCOMES = [
