@@ -35,6 +35,7 @@ export const TEAM_MEMBERS = [
   },
   {
     name: 'Muhamad Irsad Assopi',
+    nickname: 'Irsad',
     role: 'Sekretaris',
     jurusan: 'S1 Teknik Informatika',
     division: 'Sekretariat',
@@ -43,6 +44,7 @@ export const TEAM_MEMBERS = [
   },
   {
     name: 'Muhammad Rizki',
+    nickname: 'Rizki',
     role: 'Bendahara',
     jurusan: 'S1 Teknik Informatika',
     division: 'Keuangan',

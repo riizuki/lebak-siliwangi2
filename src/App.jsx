@@ -206,7 +206,7 @@ function HeroSection() {
 
 function Person({ m, role }) {
   return (
-    <figure data-cursor={m.name.split(' ')[0]} className="group">
+    <figure data-cursor={m.nickname || m.name.split(' ')[0]} className="group">
       <div className="aspect-[4/5] overflow-hidden rounded-xl bg-paper-2">
         {m.avatar ? (
           <img
