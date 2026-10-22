@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-sans: 'Geist', system-ui, sans-serif;
+
+  --color-paper: #ffffff;
+  --color-paper-2: #f3f6f4;
+  --color-ink: #101814;
+  --color-muted: #5d6a64;
+  --color-line: #e3e8e5;
+  --color-moss: #1a5c44;
+  --color-moss-dark: #0f2f24;
+  --color-clay: #1f9d6b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Sembunyikan cursor bawaan browser, diganti CustomCursor */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+.cursor-ripple {
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%) scale(1);
+  animation: cursor-ripple 0.65s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes cursor-ripple {
+  to {
+    transform: translate(-50%, -50%) scale(6);
+    opacity: 0;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+::selection {
+  background: #c8ecd9;
+  color: var(--color-ink);
+}
