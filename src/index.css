@@ -91,13 +91,67 @@ h1, h2, h3, h4 {
   }
 }
 
-/* Foto di lightbox muncul halus */
+/* Cursor di atas logo mitra: teks berputar berlawanan arah */
+.cursor-orbit-reverse {
+  animation: cursor-orbit 14s linear infinite reverse;
+}
+
+/* Cincin gradasi warna instansi yang berputar */
+.cursor-logo-ring {
+  background: conic-gradient(from 0deg, var(--logo), transparent 30%, var(--logo) 50%, transparent 80%, var(--logo));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px));
+  animation: cursor-orbit 2.2s linear infinite;
+}
+
+/* Cahaya lembut di luar cincin */
+.cursor-logo-halo {
+  background: radial-gradient(closest-side, transparent 62%, color-mix(in srgb, var(--logo) 28%, transparent) 78%, transparent);
+  animation: cursor-logo-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes cursor-logo-pulse {
+  50% {
+    transform: scale(1.08);
+    opacity: 0.6;
+  }
+}
+
+/* Cursor kapsul di foto berjalan: panah terus bergeser */
+.cursor-slide-arrow {
+  animation: cursor-slide-arrow 1.1s cubic-bezier(0.6, 0, 0.3, 1) infinite;
+}
+
+@keyframes cursor-slide-arrow {
+  0% { transform: translateX(-150%); }
+  35%, 65% { transform: translateX(0); }
+  100% { transform: translateX(150%); }
+}
+
+/* Titik REC berkedip pada cursor jendela bidik */
+.cursor-rec {
+  animation: cursor-rec 1s steps(2, start) infinite;
+}
+
+@keyframes cursor-rec {
+  to { visibility: hidden; }
+}
+
+/* Lightbox: latar dan foto muncul halus, foto bergeser sesuai arah navigasi */
 .lightbox {
-  animation: lightbox-in 0.3s ease both;
+  animation: lightbox-in 0.35s ease both;
+}
+
+.lightbox-bg {
+  animation: lightbox-in 0.9s ease both;
 }
 
 .lightbox-img {
-  animation: lightbox-img-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: lightbox-img-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.lightbox-caption {
+  animation: lightbox-caption-in 0.5s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes lightbox-in {
@@ -105,7 +159,28 @@ h1, h2, h3, h4 {
 }
 
 @keyframes lightbox-img-in {
-  from { opacity: 0; transform: scale(0.96); }
+  from { opacity: 0; transform: translateX(calc(var(--dir, 0) * 56px)) scale(0.96); }
+}
+
+@keyframes lightbox-caption-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Kartu foto pada cursor album jatuh masuk */
+.cursor-card-in {
+  animation: cursor-card-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cursor-card-in {
+  from { opacity: 0; transform: translateY(-14px) rotate(-12deg) scale(0.9); }
 }
 
 /* Foto kegiatan berjalan tanpa henti; berhenti saat di-hover */

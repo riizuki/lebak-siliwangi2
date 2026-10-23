@@ -26,6 +26,7 @@ export const UI = {
     viewGallery: 'Lihat galeri',
     cursorGallery: 'Galeri',
     cursorView: 'Lihat',
+    cursorOpen: 'Buka foto',
 
     teamLabel: 'Struktur Tim',
     teamSubtitle: 'Sebelas mahasiswa UNIKOM dari berbagai jurusan yang tinggal dan bekerja bersama warga Coblong selama masa KKN.',
@@ -91,6 +92,9 @@ export const UI = {
     footerNav: 'Navigasi',
     footerPrograms: 'Program',
     footerAddress: 'Alamat',
+    partnersLabel: 'Bekerja sama dengan',
+    partnersTitle: 'Dari kelurahan hingga tingkat wilayah',
+    partnersDesc: 'Program KKN ini dijalankan bersama instansi-instansi berikut, diurutkan dari tingkat paling lokal.',
     backToTop: 'Kembali ke atas',
   },
 
@@ -115,6 +119,7 @@ export const UI = {
     viewGallery: 'View gallery',
     cursorGallery: 'Gallery',
     cursorView: 'View',
+    cursorOpen: 'Open photo',
 
     teamLabel: 'Team',
     teamSubtitle: 'Eleven UNIKOM students from different majors who lived and worked alongside Coblong residents during KKN.',
@@ -180,6 +185,9 @@ export const UI = {
     footerNav: 'Navigation',
     footerPrograms: 'Programs',
     footerAddress: 'Address',
+    partnersLabel: 'In collaboration with',
+    partnersTitle: 'From the village office to the regional level',
+    partnersDesc: 'This community service program was carried out together with these institutions, ordered from the most local level.',
     backToTop: 'Back to top',
   },
 };

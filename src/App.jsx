@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars, faXmark, faArrowRight, faArrowUp, faArrowUpRightFromSquare,
@@ -6,6 +6,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 
+import { createPortal } from 'react-dom';
 import { usePrefs } from './preferences';
 import CustomCursor from './components/CustomCursor';
 
@@ -23,7 +24,7 @@ function SectionHeader({ no, label, title, subtitle }) {
         <span className="text-clay">{no}</span> &nbsp;{label}
       </p>
       <div className="md:col-span-9">
-        <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.1] text-ink">{title}</h2>
+        <h2 className="text-[1.75rem] sm:text-4xl lg:text-[2.75rem] leading-[1.1] text-ink">{title}</h2>
         {subtitle && <p className="mt-3 max-w-xl text-muted leading-relaxed">{subtitle}</p>}
       </div>
     </div>
@@ -212,7 +213,7 @@ function HeroSection() {
 
       <div className="relative max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 sm:pb-14">
         <p className="text-sm text-white/75 mb-4">{HERO_CONTENT.badge}</p>
-        <h1 className="text-4xl sm:text-5xl lg:text-[4.25rem] leading-[1.05] max-w-4xl">
+        <h1 className="text-[2.1rem] sm:text-5xl lg:text-[4.25rem] leading-[1.08] sm:leading-[1.05] max-w-4xl">
           {HERO_CONTENT.title}{' '}
           <span className="text-[#9fe3bf]">{HERO_CONTENT.titleHighlight}</span>
         </h1>
@@ -255,6 +256,7 @@ function MarqueeRow({ items, reverse, duration }) {
             key={i}
             href="/galeri"
             data-cursor={t.cursorGallery}
+            data-cursor-type="slide"
             aria-hidden={i >= items.length}
             tabIndex={i >= items.length ? -1 : undefined}
             className="group relative shrink-0 pr-3 sm:pr-4"
@@ -320,7 +322,7 @@ function Person({ m, role }) {
         </span>
         <span aria-hidden="true" className="absolute inset-[18px] pointer-events-none border border-white/30 opacity-0 transition-opacity duration-700 group-hover:opacity-100 group-hover:delay-500" />
         <span aria-hidden="true" className="absolute inset-x-7 bottom-7 flex items-end justify-between gap-3 text-white pointer-events-none">
-          <span className="font-heading text-2xl leading-none tabular-nums opacity-0 translate-y-2 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0 group-hover:delay-500">
+          <span className="font-heading text-xl sm:text-2xl leading-none tabular-nums opacity-0 translate-y-2 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0 group-hover:delay-500">
             {String(no).padStart(2, '0')}
           </span>
           <span className="hidden @[260px]:inline whitespace-nowrap text-[10px] uppercase tracking-[0.2em] text-white/80 opacity-0 translate-y-2 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0 group-hover:delay-[600ms]">
@@ -368,8 +370,8 @@ function AboutSection() {
         {divisions.map((d) => (
           <div key={d.name} className="mt-20">
             <div className="flex items-baseline justify-between border-b border-line pb-3 mb-6">
-              <h3 className="text-2xl">{d.name}</h3>
-              <span className="text-sm text-muted">{d.note} · {t.people(d.members.length)}</span>
+              <h3 className="text-xl sm:text-2xl">{d.name}</h3>
+              <span className="text-xs sm:text-sm text-muted">{d.note} · {t.people(d.members.length)}</span>
             </div>
             <div className="team-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6">
               {d.members.map((m) => <Person key={m.name} m={m} />)}
@@ -414,19 +416,20 @@ function ProgramSection() {
             const st = STATUS[prog.status];
             return (
               <li key={prog.id} className="grid md:grid-cols-12 gap-3 md:gap-6 py-8 md:py-10">
-                <span className="md:col-span-1 font-heading text-3xl text-clay leading-none">{prog.id}</span>
+                <span className="md:col-span-1 font-heading text-2xl sm:text-3xl text-clay leading-none">{prog.id}</span>
                 <div className="md:col-span-7">
                   <p className="text-xs uppercase tracking-wide text-muted mb-2">{prog.category}</p>
-                  <h3 className="text-2xl leading-snug mb-3">{prog.title}</h3>
+                  <h3 className="text-xl sm:text-2xl leading-snug mb-3">{prog.title}</h3>
                   <p className="text-muted leading-relaxed max-w-xl">{prog.desc}</p>
                   {photosOf(prog).length > 0 && (
-                    <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3 max-w-xl">
+                    <div className="mt-5 grid grid-cols-4 gap-1.5 sm:gap-2.5">
                       {photosOf(prog).map((g, i, arr) => (
                         <button
                           key={g.src}
                           type="button"
                           onClick={() => setOpen({ items: arr, index: i })}
                           data-cursor={t.cursorView}
+                          data-cursor-type="frame"
                           aria-label={g.title}
                           className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-paper-2"
                         >
@@ -513,7 +516,7 @@ function LocationSection() {
 
           <div className="lg:col-span-5">
             <p className="text-sm text-clay mb-2">{loc.category}</p>
-            <h3 className="text-2xl sm:text-3xl leading-snug">{loc.name}</h3>
+            <h3 className="text-[1.375rem] sm:text-3xl leading-snug">{loc.name}</h3>
             <p className="mt-3 text-muted leading-relaxed">{loc.desc}</p>
 
             <dl className="mt-6 divide-y divide-line border-y border-line text-sm">
@@ -547,14 +550,24 @@ function LocationSection() {
 const HOME_GALLERY_LIMIT = 13;
 
 function Lightbox({ items, index, onClose, onNav }) {
-  const { t } = usePrefs();
+  const { GALLERY_FILTERS, t } = usePrefs();
   const item = items[index];
+  // Arah geser foto: 1 = ke foto berikutnya, -1 = ke sebelumnya, 0 = baru dibuka
+  const [dir, setDir] = useState(0);
+  const stripRef = useRef(null);
+  const touchX = useRef(null);
+
+  const go = useCallback((d) => {
+    if (!d) return;
+    setDir(d > 0 ? 1 : -1);
+    onNav(d);
+  }, [onNav]);
 
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowRight') onNav(1);
-      if (e.key === 'ArrowLeft') onNav(-1);
+      if (e.key === 'ArrowRight') go(1);
+      if (e.key === 'ArrowLeft') go(-1);
     };
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -563,60 +576,126 @@ function Lightbox({ items, index, onClose, onNav }) {
       document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', onKey);
     };
-  }, [onClose, onNav]);
+  }, [onClose, go]);
 
-  const navBtn = 'absolute top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors';
+  // Thumbnail aktif selalu di tengah filmstrip. Hanya filmstrip yang digulir:
+  // scrollIntoView ikut menggeser wadah induk sehingga overlay bisa bergeser ke samping.
+  useEffect(() => {
+    const strip = stripRef.current;
+    const active = strip?.querySelector('[data-active="true"]');
+    if (!active) return;
+    const sr = strip.getBoundingClientRect();
+    const ar = active.getBoundingClientRect();
+    strip.scrollTo({ left: strip.scrollLeft + (ar.left - sr.left) - (sr.width - ar.width) / 2, behavior: 'smooth' });
+  }, [index]);
 
-  return (
+  const pad = (n) => String(n).padStart(2, '0');
+  const cat = GALLERY_FILTERS.find((f) => f.key === item.category)?.label;
+  const navBtn =
+    'absolute top-1/2 -translate-y-1/2 z-10 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white flex items-center justify-center transition-colors duration-300 hover:bg-white hover:text-night';
+
+  // Dirender langsung ke body supaya posisi fixed tidak terpengaruh transform elemen induk
+  return createPortal(
     <div
       data-dark
       role="dialog"
       aria-modal="true"
       aria-label={item.title}
       onClick={onClose}
-      className="lightbox fixed inset-0 z-[100] bg-night/95 backdrop-blur-sm flex flex-col"
+      onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
+      onTouchEnd={(e) => {
+        if (touchX.current === null) return;
+        const dx = e.changedTouches[0].clientX - touchX.current;
+        if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+        touchX.current = null;
+      }}
+      className="lightbox fixed inset-0 z-[100] bg-night flex flex-col overflow-clip"
     >
-      <div className="flex items-center justify-between px-4 sm:px-6 h-16 text-white/80 text-sm">
-        <span className="tabular-nums">{String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>
-        <button onClick={onClose} aria-label={t.close} className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+      {/* Latar: foto yang sama, diperbesar dan diburamkan supaya warnanya menyatu */}
+      <img key={`bg-${item.src}`} src={item.src} alt="" aria-hidden="true" className="lightbox-bg absolute inset-0 w-full h-full object-cover scale-125 blur-3xl saturate-150 opacity-55 pointer-events-none" />
+      <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-night/80 via-night/45 to-night/95 pointer-events-none" />
+
+      {/* Bilah atas: nomor, progres, kategori, tutup */}
+      <div className="relative flex items-center gap-4 sm:gap-6 px-4 sm:px-6 h-16 text-white" onClick={(e) => e.stopPropagation()}>
+        <span className="font-heading text-xl tabular-nums leading-none">
+          {pad(index + 1)}
+          <span className="text-sm text-white/40"> / {pad(items.length)}</span>
+        </span>
+        <span className="relative flex-1 max-w-[220px] h-px bg-white/15 overflow-hidden">
+          <span className="absolute inset-y-0 left-0 bg-white transition-[width] duration-500 ease-out" style={{ width: `${((index + 1) / items.length) * 100}%` }} />
+        </span>
+        {cat && (
+          <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-medium uppercase tracking-[0.18em] text-white/80">
+            {cat}
+          </span>
+        )}
+        <button onClick={onClose} aria-label={t.close} className="ml-auto w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/15 hover:bg-white hover:text-night text-white flex items-center justify-center transition-colors duration-300">
           <FontAwesomeIcon icon={faXmark} />
         </button>
       </div>
 
-      <div className="relative flex-1 min-h-0 flex items-center justify-center px-4 sm:px-20">
+      {/* Foto utama */}
+      <div className="relative flex-1 min-h-0 flex items-center justify-center px-4 sm:px-24">
         <img
           key={item.src}
           src={item.src}
           alt={item.title}
+          data-cursor-none
           onClick={(e) => e.stopPropagation()}
-          className="lightbox-img max-w-full max-h-full object-contain rounded-md shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
+          style={{ '--dir': dir }}
+          className="lightbox-img max-w-full max-h-full object-contain rounded-xl ring-1 ring-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.6)]"
         />
         {items.length > 1 && (
           <>
-            <button onClick={(e) => { e.stopPropagation(); onNav(-1); }} aria-label={t.prevPhoto} className={`${navBtn} left-3 sm:left-6`}>
+            <button onClick={(e) => { e.stopPropagation(); go(-1); }} aria-label={t.prevPhoto} className={`${navBtn} left-3 sm:left-6`}>
               <FontAwesomeIcon icon={faArrowRight} className="rotate-180" />
             </button>
-            <button onClick={(e) => { e.stopPropagation(); onNav(1); }} aria-label={t.nextPhoto} className={`${navBtn} right-3 sm:right-6`}>
+            <button onClick={(e) => { e.stopPropagation(); go(1); }} aria-label={t.nextPhoto} className={`${navBtn} right-3 sm:right-6`}>
               <FontAwesomeIcon icon={faArrowRight} />
             </button>
           </>
         )}
       </div>
 
-      <div className="px-4 sm:px-6 py-5 text-center" onClick={(e) => e.stopPropagation()}>
-        <p className="font-heading text-lg text-white">{item.title}</p>
-        <p className="mt-1 text-sm text-white/60">{item.location}</p>
+      {/* Keterangan + filmstrip */}
+      <div className="relative px-4 sm:px-6 pt-4 pb-5" onClick={(e) => e.stopPropagation()}>
+        <div key={item.src} className="lightbox-caption text-center">
+          <p className="font-heading text-lg sm:text-xl text-white leading-snug">{item.title}</p>
+          <p className="mt-1 text-xs sm:text-sm text-white/55">{item.location}</p>
+        </div>
+        {items.length > 1 && (
+          <div ref={stripRef} className="no-scrollbar mt-4 overflow-x-auto [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)]">
+            <div className="flex gap-2 w-max mx-auto px-6 py-1.5">
+              {items.map((it, i) => (
+                <button
+                  key={it.src}
+                  data-active={i === index}
+                  onClick={() => go(i - index)}
+                  aria-label={it.title}
+                  className={`shrink-0 w-14 h-10 sm:w-16 sm:h-11 rounded-md overflow-hidden transition-all duration-300 ${
+                    i === index ? 'ring-2 ring-white opacity-100 -translate-y-0.5' : 'opacity-35 hover:opacity-80'
+                  }`}
+                >
+                  <img src={it.src} alt="" loading="lazy" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
-function GalleryGrid({ limit, layout = 'classic' }) {
+function GalleryGrid({ limit, picks, layout = 'classic' }) {
   const { GALLERY_ITEMS, GALLERY_FILTERS, t } = usePrefs();
   const [filter, setFilter] = useState('semua');
   const [openIdx, setOpenIdx] = useState(null);
   const matches = filter === 'semua' ? GALLERY_ITEMS : GALLERY_ITEMS.filter((i) => i.category === filter);
-  const filtered = limit ? matches.slice(0, limit) : matches;
+  // Tab "Semua" bisa memakai daftar foto pilihan; tab kategori tetap mengambil foto pertama sesuai batas
+  const picked = picks && filter === 'semua' ? picks.map((src) => GALLERY_ITEMS.find((i) => i.src === src)).filter(Boolean) : matches;
+  const filtered = limit ? picked.slice(0, limit) : picked;
   const countOf = (key) => (key === 'semua' ? GALLERY_ITEMS.length : GALLERY_ITEMS.filter((i) => i.category === key).length);
   const justified = layout === 'justified';
   // Rasio asli tiap foto (dibaca saat foto selesai dimuat) untuk tata letak justified
@@ -652,7 +731,8 @@ function GalleryGrid({ limit, layout = 'classic' }) {
             return (
               <figure
                 key={item.src}
-                data-cursor={t.cursorView}
+                data-cursor={t.cursorOpen}
+                data-cursor-type="shutter"
                 onClick={() => setOpenIdx(idx)}
                 style={{ flexGrow: ratio * scale, flexBasis: `calc(var(--row-h) * ${ratio * scale})` }}
                 className="group relative overflow-hidden rounded-[18px] sm:rounded-3xl bg-paper-2 cursor-pointer"
@@ -686,7 +766,7 @@ function GalleryGrid({ limit, layout = 'classic' }) {
           {filtered.map((item, idx) => {
             const featured = idx === 0 && filtered.length > 2;
             return (
-              <figure key={item.src} data-cursor={t.cursorView} onClick={() => setOpenIdx(idx)} className={featured ? 'col-span-2 row-span-2' : ''}>
+              <figure key={item.src} data-cursor={t.cursorView} data-cursor-type="album" data-cursor-img={item.src} data-cursor-count={`${String(idx + 1).padStart(2, '0')} / ${String(filtered.length).padStart(2, '0')}`} onClick={() => setOpenIdx(idx)} className={featured ? 'col-span-2 row-span-2' : ''}>
                 <div className={`overflow-hidden rounded-sm bg-paper-2 ${featured ? 'aspect-[4/3] lg:aspect-auto lg:h-[calc(100%-3.5rem)]' : 'aspect-[4/3]'}`}>
                   <img src={item.src} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
                 </div>
@@ -706,7 +786,7 @@ function GalleryGrid({ limit, layout = 'classic' }) {
 }
 
 function GallerySection() {
-  const { GALLERY_ITEMS, t } = usePrefs();
+  const { GALLERY_ITEMS, HOME_GALLERY, t } = usePrefs();
   return (
     <section id="galeri" className="py-20 md:py-28 bg-paper-2/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -717,7 +797,7 @@ function GallerySection() {
           subtitle={t.gallerySubtitle}
         />
 
-        <GalleryGrid limit={HOME_GALLERY_LIMIT} />
+        <GalleryGrid limit={HOME_GALLERY_LIMIT} picks={HOME_GALLERY} />
 
         <div className="mt-12 flex justify-center">
           <a
@@ -814,7 +894,7 @@ function SummarySection() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line rounded-2xl overflow-hidden">
           {stats.map(([value, label, note]) => (
             <div key={label} className="bg-paper p-5 sm:p-7">
-              <p className="font-heading text-4xl sm:text-5xl text-moss leading-none">{value}</p>
+              <p className="font-heading text-3xl sm:text-5xl text-moss leading-none">{value}</p>
               <p className="mt-3 font-medium">{label}</p>
               <p className="text-sm text-muted mt-0.5">{note}</p>
             </div>
@@ -824,8 +904,8 @@ function SummarySection() {
         {/* Timeline proker */}
         <div className="mt-16">
           <div className="flex items-baseline justify-between border-b border-line pb-3 mb-6">
-            <h3 className="text-2xl">{t.timeline}</h3>
-            <span className="text-sm text-muted">{t.timelineRange}</span>
+            <h3 className="text-xl sm:text-2xl">{t.timeline}</h3>
+            <span className="text-xs sm:text-sm text-muted">{t.timelineRange}</span>
           </div>
 
           <div className="relative">
@@ -881,7 +961,7 @@ function SummarySection() {
         </div>
 
         <div className="mt-20">
-          <h3 className="text-2xl border-b border-line pb-3">{t.divisionWork}</h3>
+          <h3 className="text-xl sm:text-2xl border-b border-line pb-3">{t.divisionWork}</h3>
           <div className="divide-y divide-line">
             {DIVISION_OUTCOMES.map((d) => (
               <div key={d.title} className="grid md:grid-cols-12 gap-2 md:gap-6 py-5 text-sm">
@@ -892,6 +972,79 @@ function SummarySection() {
             ))}
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Instansi mitra kerja sama ── */
+
+function PartnersSection() {
+  const { PARTNER_LOGOS, t } = usePrefs();
+
+  // Logo miring 3D mengikuti posisi mouse
+  const tilt = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    e.currentTarget.style.setProperty('--rx', `${(-y * 22).toFixed(2)}deg`);
+    e.currentTarget.style.setProperty('--ry', `${(x * 26).toFixed(2)}deg`);
+  };
+  const untilt = (e) => {
+    e.currentTarget.style.setProperty('--rx', '0deg');
+    e.currentTarget.style.setProperty('--ry', '0deg');
+  };
+
+  return (
+    <section aria-labelledby="mitra-title" className="py-16 md:py-20 border-t border-line">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+        <div className="lg:col-span-4">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-clay mb-3">{t.partnersLabel}</p>
+          <h2 id="mitra-title" className="font-heading text-[1.375rem] sm:text-2xl md:text-3xl leading-tight">{t.partnersTitle}</h2>
+          <p className="mt-3 text-sm text-muted leading-relaxed max-w-sm">{t.partnersDesc}</p>
+        </div>
+
+        {/* Saat satu logo disorot, logo lain meredup */}
+        <ol className="group/logos lg:col-span-8 relative flex flex-wrap justify-center sm:flex-nowrap gap-y-10">
+          {PARTNER_LOGOS.map((logo, i) => (
+            <li
+              key={logo.name}
+              data-cursor={logo.level}
+              data-cursor-type="logo"
+              data-cursor-sub={logo.name}
+              data-cursor-color={logo.color}
+              onMouseMove={tilt}
+              onMouseLeave={untilt}
+              style={{ '--logo': logo.color }}
+              className={`group relative w-1/2 sm:w-auto px-2 flex flex-col items-center text-center transition-[opacity,filter] duration-500 [@media(pointer:fine)]:group-hover/logos:opacity-35 [@media(pointer:fine)]:group-hover/logos:grayscale hover:opacity-100! hover:grayscale-0! ${
+                logo.wide ? 'sm:flex-[1.5]' : 'sm:flex-1'
+              }`}
+            >
+              {/* Garis jenjang dari tingkat lokal ke nasional */}
+              <span
+                aria-hidden="true"
+                className={`hidden sm:block absolute top-[7.3rem] h-px bg-clay/30 ${i === 0 ? 'left-1/2' : 'left-0'} ${i === PARTNER_LOGOS.length - 1 ? 'right-1/2' : 'right-0'}`}
+              />
+              <div data-logo-box className={`h-24 w-full flex items-center justify-center [perspective:600px] ${logo.darkText ? 'dark:brightness-[1.6] dark:contrast-[0.9]' : ''}`}>
+                <img
+                  src={logo.src}
+                  alt={`Logo ${logo.name}`}
+                  loading="lazy"
+                  style={{ transform: 'rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--s, 1))' }}
+                  className={`object-contain max-w-full [--s:1] group-hover:[--s:1.14] transition-[transform,filter] duration-300 ease-out group-hover:[filter:drop-shadow(0_14px_22px_color-mix(in_srgb,var(--logo)_45%,transparent))] ${
+                    logo.wide ? 'h-14 md:h-16' : 'h-20 md:h-24'
+                  }`}
+                />
+              </div>
+              <span
+                className="relative z-10 mt-4 w-2.5 h-2.5 rounded-full border-2 border-paper bg-clay hidden sm:block transition-transform duration-500 group-hover:scale-150 group-hover:bg-[var(--logo)] group-hover:opacity-100!"
+                style={{ opacity: 0.45 + i * 0.14 }}
+              />
+              <span className="mt-3 text-[10px] font-medium uppercase tracking-[0.16em] text-clay whitespace-nowrap transition-colors duration-300 group-hover:text-[var(--logo)]">{logo.level}</span>
+              <span className="mt-1 text-xs text-muted leading-snug max-w-[10rem] transition-colors duration-300 group-hover:text-ink">{logo.name}</span>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
@@ -989,7 +1142,7 @@ function Footer() {
         {/* Baris bawah */}
         <div className="py-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-white/45">
           <div className="flex items-center gap-2.5">
-            <img src="/logo-unikom.png" alt="Logo UNIKOM" className="w-5 h-5 object-contain opacity-80" />
+            <img src="/images/logo/unikom.png" alt="Logo UNIKOM" className="w-6 h-6 object-contain" />
             <p>{FOOTER_INFO.copyright}</p>
           </div>
           <a
@@ -1035,6 +1188,7 @@ export default function App() {
         <GallerySection />
         <SummarySection />
       </main>
+      <PartnersSection />
       <Footer />
     </div>
   );

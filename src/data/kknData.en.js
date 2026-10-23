@@ -96,6 +96,21 @@ const FILTER_LABELS = {
   sosialisasi: 'Outreach',
 };
 
+export const HOME_GALLERY = ID.HOME_GALLERY;
+
+const PARTNER_NAMES = {
+  'LLDIKTI Wilayah IV': 'LLDIKTI Region IV',
+  'Pemerintah Provinsi Jawa Barat': 'West Java Provincial Government',
+};
+const PARTNER_LEVELS = {
+  Kelurahan: 'Village',
+  Kecamatan: 'District',
+  'Perguruan Tinggi': 'University',
+  Provinsi: 'Province',
+  Wilayah: 'Regional',
+};
+export const PARTNER_LOGOS = ID.PARTNER_LOGOS.map((l) => ({ ...l, name: PARTNER_NAMES[l.name] || l.name, level: PARTNER_LEVELS[l.level] || l.level }));
+
 export const GALLERY_FILTERS = ID.GALLERY_FILTERS.map((f) => ({ ...f, label: FILTER_LABELS[f.key] || f.label }));
 
 // Judul foto berdasarkan nama file
@@ -150,6 +165,7 @@ const GALLERY_TITLES = {
   'penjelasan-hanggar-maggot': 'Learning about organic waste processing at the Maggot Hangar',
   'pemilahan-ember-organik': 'Organic and inorganic waste, sorted',
   'survei-warung-warga': 'Greeting a stall owner during the neighborhood survey',
+  'merakit-press-bersama': 'Drilling the press machine frame together',
   'mesin-press-jadi': 'The assembled bottle & can press',
   'mencacah-bersama-ibu': 'Chopping organic waste with local mothers',
   'bank-sampah-induk': 'Visiting the Bandung City Central Waste Bank',

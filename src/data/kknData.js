@@ -117,6 +117,15 @@ export const TEAM_MEMBERS = [
   },
 ];
 
+// Logo instansi mitra kerja sama, diurutkan dari tingkat paling bawah ke paling tinggi
+export const PARTNER_LOGOS = [
+  { name: 'Kelurahan Lebak Siliwangi', level: 'Kelurahan', src: '/images/logo/kelurahan-lebak-siliwangi.png', color: '#2e9e5b' },
+  { name: 'Kecamatan Coblong', level: 'Kecamatan', src: '/images/logo/kecamatan-coblong.png', wide: true, darkText: true, color: '#d9a400' },
+  { name: 'Universitas Komputer Indonesia', level: 'Perguruan Tinggi', src: '/images/logo/unikom.png', color: '#0b8bd0' },
+  { name: 'Pemerintah Provinsi Jawa Barat', level: 'Provinsi', src: '/images/logo/jawa-barat.png', color: '#0f9d58' },
+  { name: 'LLDIKTI Wilayah IV', level: 'Wilayah', src: '/images/logo/lldikti-wilayah-4.png', wide: true, color: '#2b56a8' },
+];
+
 export const PROGRAMS = [
   {
     id: '01',
@@ -129,7 +138,7 @@ export const PROGRAMS = [
     end: '2026-10-03',
     status: 'selesai',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
-    photos: ['kunjungan-bank-sampah', 'bank-sampah-gaslah', 'sosialisasi-pendampingan'],
+    photos: ['kunjungan-bank-sampah', 'bank-sampah-gaslah', 'sosialisasi-pendampingan', 'sosialisasi-menjelaskan'],
   },
   {
     id: '02',
@@ -142,7 +151,7 @@ export const PROGRAMS = [
     end: '2026-10-31',
     status: 'berjalan',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
-    photos: ['hanggar-maggot', 'mencacah-organik', 'pengepul-memilah-plastik'],
+    photos: ['pemilahan-bersama-gaslah', 'pemilahan-ember-organik', 'pemilahan-hasil-terkumpul', 'pemilahan-bank-sampah-rw05'],
   },
   {
     id: '03',
@@ -155,7 +164,7 @@ export const PROGRAMS = [
     end: '2026-09-11',
     status: 'selesai',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
-    photos: ['memotong-kayu', 'menguji-bor'],
+    photos: ['memotong-besi-press', 'mengebor-plat-press', 'merakit-press-bersama', 'mesin-press-jadi'],
   },
   {
     id: '04',
@@ -168,7 +177,7 @@ export const PROGRAMS = [
     end: '2026-10-10',
     status: 'selesai',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
-    photos: ['merakit-rangka', 'rw07-menyapu', 'rw07-anak-membantu'],
+    photos: ['rangka-pencacah', 'dinamo-pencacah', 'merakit-rangka', 'merakit-wadah-pencacah'],
   },
 ];
 
@@ -184,6 +193,23 @@ export const GALLERY_FILTERS = [
 ];
 
 const img = (name) => `/images/kegiatan/${name}.jpg`;
+
+// Foto pilihan yang tampil di bagian Galeri halaman utama (urutan = urutan tampil, foto pertama tampil besar)
+export const HOME_GALLERY = [
+  'memilah-maggot',
+  'pembekalan-kelurahan',
+  'pemilahan-bersama-gaslah',
+  'rw07-foto-bersama',
+  'rangka-pencacah',
+  'sosialisasi-aplikasi',
+  'foto-tim',
+  'maggot-tumpukan',
+  'wawancara-warga',
+  'rw05-dari-atas',
+  'pengepul-tumpukan-plastik',
+  'mencacah-bersama-ibu',
+  'kantor-kelurahan',
+].map(img);
 
 export const GALLERY_ITEMS = [
   { src: img('memilah-maggot'), category: 'maggot', title: 'Memilah maggot hasil budidaya', location: 'Lebak Siliwangi · Okt 2026' },
@@ -236,6 +262,7 @@ export const GALLERY_ITEMS = [
   { src: img('penjelasan-hanggar-maggot'), category: 'maggot', title: 'Mendengarkan penjelasan pengelolaan sampah organik di Hanggar Maggot', location: 'Lebak Siliwangi · Agu 2026' },
   { src: img('pemilahan-ember-organik'), category: 'pemilahan', title: 'Sampah organik dan anorganik yang sudah dipisah', location: 'RW 05 · Sep 2026' },
   { src: img('survei-warung-warga'), category: 'warga', title: 'Menyapa pemilik warung saat survei lingkungan', location: 'Lebak Siliwangi · Agu 2026' },
+  { src: img('merakit-press-bersama'), category: 'alat', title: 'Mengebor rangka mesin press bersama-sama', location: 'RW 05 · Sep 2026' },
   { src: img('mesin-press-jadi'), category: 'alat', title: 'Mesin press botol & kaleng yang sudah dirakit', location: 'Lebak Siliwangi · Sep 2026' },
   { src: img('mencacah-bersama-ibu'), category: 'maggot', title: 'Mencacah sampah organik bersama ibu-ibu', location: 'Lebak Siliwangi · Okt 2026' },
   { src: img('bank-sampah-induk'), category: 'warga', title: 'Berkunjung ke Bank Sampah Induk Kota Bandung', location: 'Kota Bandung · Sep 2026' },

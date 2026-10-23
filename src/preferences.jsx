@@ -4,8 +4,6 @@ import * as DATA_ID from './data/kknData';
 import * as DATA_EN from './data/kknData.en';
 import { UI } from './data/ui';
 
-/* Preferensi pengunjung: bahasa (id/en) dan mode tampilan (terang/gelap).
-   Disimpan di localStorage supaya tetap sama saat halaman dibuka lagi. */
 
 const read = (key) => {
   try {
@@ -58,5 +56,4 @@ export function PreferencesProvider({ children }) {
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
 }
 
-// Teks antarmuka (t), data konten sesuai bahasa, serta pengatur bahasa & mode
 export const usePrefs = () => useContext(PreferencesContext);
