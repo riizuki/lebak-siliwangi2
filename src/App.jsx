@@ -390,7 +390,15 @@ const STATUS = {
 };
 
 function ProgramSection() {
-  const { PROGRAMS, t } = usePrefs();
+  const { PROGRAMS, GALLERY_ITEMS, t } = usePrefs();
+  const [open, setOpen] = useState(null); // { items, index }
+
+  const photosOf = (prog) =>
+    (prog.photos || []).map((name) => GALLERY_ITEMS.find((g) => g.src === `/images/kegiatan/${name}.jpg`)).filter(Boolean);
+
+  const close = useCallback(() => setOpen(null), []);
+  const nav = useCallback((d) => setOpen((o) => o && { ...o, index: (o.index + d + o.items.length) % o.items.length }), []);
+
   return (
     <section id="proker" className="py-20 md:py-28 bg-paper-2/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -411,6 +419,22 @@ function ProgramSection() {
                   <p className="text-xs uppercase tracking-wide text-muted mb-2">{prog.category}</p>
                   <h3 className="text-2xl leading-snug mb-3">{prog.title}</h3>
                   <p className="text-muted leading-relaxed max-w-xl">{prog.desc}</p>
+                  {photosOf(prog).length > 0 && (
+                    <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3 max-w-xl">
+                      {photosOf(prog).map((g, i, arr) => (
+                        <button
+                          key={g.src}
+                          type="button"
+                          onClick={() => setOpen({ items: arr, index: i })}
+                          data-cursor={t.cursorView}
+                          aria-label={g.title}
+                          className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-paper-2"
+                        >
+                          <img src={g.src} alt={g.title} loading="lazy" className="w-full h-full object-cover transition-[filter] duration-500 group-hover:brightness-90" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <dl className="md:col-span-4 md:pl-6 md:border-l border-line text-sm space-y-3 md:pt-6">
                   <div>
@@ -429,6 +453,8 @@ function ProgramSection() {
           })}
         </ol>
       </div>
+
+      {open && <Lightbox items={open.items} index={open.index} onClose={close} onNav={nav} />}
     </section>
   );
 }

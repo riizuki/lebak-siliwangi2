@@ -128,6 +128,8 @@ export const PROGRAMS = [
     start: '2026-09-03',
     end: '2026-10-03',
     status: 'selesai',
+    // Foto kegiatan terkait (nama file di /images/kegiatan)
+    photos: ['kunjungan-bank-sampah', 'bank-sampah-gaslah', 'sosialisasi-pendampingan'],
   },
   {
     id: '02',
@@ -139,6 +141,8 @@ export const PROGRAMS = [
     start: '2026-09-09',
     end: '2026-10-31',
     status: 'berjalan',
+    // Foto kegiatan terkait (nama file di /images/kegiatan)
+    photos: ['hanggar-maggot', 'mencacah-organik', 'pengepul-memilah-plastik'],
   },
   {
     id: '03',
@@ -150,6 +154,8 @@ export const PROGRAMS = [
     start: '2026-09-09',
     end: '2026-09-11',
     status: 'selesai',
+    // Foto kegiatan terkait (nama file di /images/kegiatan)
+    photos: ['memotong-kayu', 'menguji-bor'],
   },
   {
     id: '04',
@@ -161,6 +167,8 @@ export const PROGRAMS = [
     start: '2026-10-06',
     end: '2026-10-10',
     status: 'selesai',
+    // Foto kegiatan terkait (nama file di /images/kegiatan)
+    photos: ['merakit-rangka', 'rw07-menyapu', 'rw07-anak-membantu'],
   },
 ];
 
