@@ -331,13 +331,13 @@ function Person({ m, role, tag, caption = true, cursorType = 'person', cursorSub
         </span>
       </div>
       {caption && <figcaption className="mt-3">
-        {role && <p className="text-xs text-clay mb-0.5">{role}</p>}
-        <p className="font-heading text-base leading-snug">
+        {role && <p className="text-[11px] sm:text-xs text-clay mb-0.5">{role}</p>}
+        <p className="font-heading text-[13.5px] sm:text-base leading-snug">
           <span className="bg-[linear-gradient(currentColor,currentColor)] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-[length:100%_1px]">
             {m.name}
           </span>
         </p>
-        <p className="text-sm text-muted">{m.jurusan}</p>
+        <p className="text-xs sm:text-sm text-muted">{m.jurusan}</p>
       </figcaption>}
     </figure>
   );
@@ -374,7 +374,7 @@ function AboutSection() {
 
         {/* Dosen Pembimbing Lapangan: foto seukuran kartu anggota + keterangan di sampingnya */}
         <TeamGroupHeading title={t.divSupervisor} note={t.divSupervisorNote} />
-        <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
+        <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6 sm:gap-6">
           <Person m={dpl} tag="DPL" caption={false} cursorType="mentor" cursorSub={DPL.role} />
           <div className="sm:col-span-2 flex flex-col justify-center sm:pl-6 lg:pl-10">
             <p className="text-[9px] sm:text-xs font-medium uppercase tracking-[0.14em] sm:tracking-[0.16em] text-clay">{DPL.role}</p>
@@ -386,7 +386,7 @@ function AboutSection() {
 
         <div className="mt-20">
           <TeamGroupHeading title={t.divLeaders} note={`${t.divLeadersNote} · ${t.people(3)}`} />
-          <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
+          <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6 sm:gap-6">
             <Person m={ketua} role={t.roleLeader} />
             <Person m={sekretaris} role={t.roleSecretary} />
             <Person m={bendahara} role={t.roleTreasurer} />
@@ -396,7 +396,7 @@ function AboutSection() {
         {divisions.map((d) => (
           <div key={d.name} className="mt-20">
             <TeamGroupHeading title={d.name} note={`${d.note} · ${t.people(d.members.length)}`} />
-            <div className="team-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6">
+            <div className="team-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-6 sm:gap-6">
               {d.members.map((m) => <Person key={m.name} m={m} />)}
             </div>
           </div>
@@ -1064,7 +1064,7 @@ function PartnersSection() {
                 style={{ opacity: 0.45 + i * 0.14 }}
               />
               <span className="mt-3 text-[10px] font-medium uppercase tracking-[0.16em] text-clay whitespace-nowrap transition-colors duration-300 group-hover:text-[var(--logo)]">{logo.level}</span>
-              <span className="mt-1 text-xs text-muted leading-snug max-w-[10rem] transition-colors duration-300 group-hover:text-ink">{logo.name}</span>
+              <span className="mt-1 text-[11px] sm:text-xs text-muted leading-snug max-w-[10rem] transition-colors duration-300 group-hover:text-ink">{logo.name}</span>
             </li>
           ))}
         </ol>
@@ -1091,7 +1091,7 @@ function Footer() {
     <footer id="kontak" className="bg-moss-dark text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Kolom informasi */}
-        <div className="py-14 md:py-16 grid grid-cols-2 md:grid-cols-12 gap-10 md:gap-8">
+        <div className="py-14 md:py-16 grid grid-cols-2 md:grid-cols-12 gap-x-5 gap-y-10 sm:gap-10 md:gap-8">
           <div className="col-span-2 md:col-span-4">
             <div className="flex items-center gap-3">
               <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-12 h-12 rounded-full bg-white object-contain" />
@@ -1121,7 +1121,7 @@ function Footer() {
 
           <div className="md:col-span-2 md:col-start-6">
             <p className={heading}>{t.footerNav}</p>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2.5 text-[13px] sm:text-sm">
               {NAV_LINKS.slice(0, -1).map(({ label, href }) => (
                 <li key={href}>
                   <a href={href} onClick={(e) => scrollTo(e, href)} className="text-white/75 hover:text-white transition-colors">
@@ -1134,7 +1134,7 @@ function Footer() {
 
           <div className="md:col-span-2">
             <p className={heading}>{t.footerPrograms}</p>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2.5 text-[13px] sm:text-sm">
               {PROGRAMS.map((p) => (
                 <li key={p.id}>
                   <a href="#proker" onClick={(e) => scrollTo(e, '#proker')} className="text-white/75 hover:text-white transition-colors">
