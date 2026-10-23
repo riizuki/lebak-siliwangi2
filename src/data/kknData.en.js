@@ -90,6 +90,7 @@ const FILTER_LABELS = {
   maggot: 'Maggot & Organic',
   alat: 'Tool Making',
   warga: 'With Residents',
+  pemilahan: 'Waste Sorting',
   'kerja-bakti': 'Clean-ups',
   pengepul: 'Waste Collector',
   sosialisasi: 'Outreach',
@@ -139,10 +140,43 @@ const GALLERY_TITLES = {
   'rw05-merapikan-tanaman': 'Trimming dry plants in a residents’ garden',
   'rw07-anak-membantu': 'Children helping collect dry leaves',
   'rw07-menyapu-bersama-anak': 'Sweeping dry leaves with RW 07 children',
+  'pembekalan-kelurahan': 'Briefing from the Lebak Siliwangi Village Office',
+  'pemilahan-bersama-gaslah': 'Sorting waste with a Gaslah Team officer',
+  'rangka-pencacah': 'Checking the wooden frame of the leaf shredder',
+  'maggot-tumpukan': 'Farmed maggots at the Maggot Hangar',
+  'wawancara-warga': 'Interviewing a resident about waste habits',
+  'sosialisasi-tertawa': 'A warm chat with a resident during the outreach',
+  'pemilahan-sisa-makanan': 'Separating food scraps from household waste',
+  'memotong-besi-press': 'Cutting steel plates for the bottle press',
+  'penjelasan-hanggar-maggot': 'Learning about organic waste processing at the Maggot Hangar',
+  'foto-bersama-bank-sampah': 'Group photo after sorting at the RW 05 waste bank',
+  'pemilahan-ember-organik': 'Organic and inorganic waste, sorted',
+  'pengepul-menjelaskan': 'Explaining the flow of inorganic waste at the collector',
+  'survei-warung-warga': 'Greeting a stall owner during the neighborhood survey',
+  'mesin-press-jadi': 'The assembled bottle & can press',
+  'mencacah-bersama-ibu': 'Chopping organic waste with local mothers',
+  'pemilahan-gaslah-rumah': 'A Gaslah officer sorting waste from residents’ homes',
+  'bank-sampah-induk': 'Visiting the Bandung City Central Waste Bank',
+  'dinamo-pencacah': 'Mounting the motor on the shredder frame',
+  'sosialisasi-menjelaskan': 'Explaining how to use the app to a resident',
+  'pemilahan-hasil-terkumpul': 'Sorted waste ready for the waste bank',
+  'diskusi-pengurus-rw05': 'Discussion with RW 05 community leaders',
+  'mencacah-closeup': 'Chopping leftover vegetables into small pieces',
+  'mengebor-plat-press': 'Drilling the press machine’s steel plate',
+  'pemilahan-bank-sampah-rw05': 'Morning sorting at the RW 05 waste bank',
+  'cermin-gang': 'Walking the alleys of Lebak Siliwangi',
+  'rw05-tersenyum-menanam': 'Planting together in the RW 05 garden',
+  'maggot-media': 'Maggots and their growing medium in the rearing tubs',
+  'pemilahan-sarung-tangan': 'Sorting plastic waste with gloves on',
+  'pertemuan-dpl': 'Activity review with our field supervisor',
+  'merakit-wadah-pencacah': 'Assembling the leaf shredder’s container',
+  'berbincang-warga-sampah': 'Talking with residents about waste management',
+  'pemilahan-pagi-rw05': 'Sorting waste with the Gaslah Team in front of the waste bank',
+  'istirahat-hanggar': 'A short break while processing organic waste',
 };
 
 const translateLocation = (loc) =>
-  loc.replace('Lokasi pengepul', 'Collector site').replace('Okt', 'Oct').replace('Agu', 'Aug');
+  loc.replace('Lokasi pengepul', 'Collector site').replace('Kantor Kelurahan', 'Village Office').replace('Kota Bandung', 'Bandung City').replace('Okt', 'Oct').replace('Agu', 'Aug');
 
 export const GALLERY_ITEMS = ID.GALLERY_ITEMS.map((item) => {
   const name = item.src.split('/').pop().replace(/\.jpg$/, '');
