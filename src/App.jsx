@@ -297,25 +297,44 @@ function ActivityMarquee() {
 /* ── Struktur Tim ── */
 
 function Person({ m, role }) {
+  const { TEAM_MEMBERS } = usePrefs();
+  const no = TEAM_MEMBERS.findIndex((x) => x.name === m.name) + 1;
+
   return (
-    <figure data-cursor={m.nickname || m.name.split(' ')[0]} data-cursor-type="person" className="group">
-      <div className="aspect-[4/5] overflow-hidden rounded-xl bg-paper-2">
+    <figure data-cursor={m.nickname || m.name.split(' ')[0]} data-cursor-type="person" className="team-person group">
+      <div className="@container relative aspect-[4/5] overflow-hidden rounded-xl bg-paper-2">
         {m.avatar ? (
-          <img
-            src={m.avatar}
-            alt={m.name}
-            className="w-full h-full object-cover object-[center_35%] transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
-            loading="lazy"
-          />
+          <img src={m.avatar} alt={m.name} className="w-full h-full object-cover object-[center_35%]" loading="lazy" />
         ) : (
           <div className="w-full h-full flex items-center justify-center font-heading text-4xl text-muted/60">
             {m.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
           </div>
         )}
+        {/* Bingkai ganda ala pigura: garis tumbuh dari tengah tiap sisi, lalu nomor & keterangan muncul */}
+        <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-night/55 via-night/5 to-night/10 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+        <span aria-hidden="true" className="absolute inset-3 pointer-events-none">
+          <span className="absolute inset-x-0 top-0 h-px bg-white/80 scale-x-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:scale-x-100" />
+          <span className="absolute inset-x-0 bottom-0 h-px bg-white/80 scale-x-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:scale-x-100" />
+          <span className="absolute inset-y-0 left-0 w-px bg-white/80 scale-y-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:scale-y-100 group-hover:delay-150" />
+          <span className="absolute inset-y-0 right-0 w-px bg-white/80 scale-y-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:scale-y-100 group-hover:delay-150" />
+        </span>
+        <span aria-hidden="true" className="absolute inset-[18px] pointer-events-none border border-white/30 opacity-0 transition-opacity duration-700 group-hover:opacity-100 group-hover:delay-500" />
+        <span aria-hidden="true" className="absolute inset-x-7 bottom-7 flex items-end justify-between gap-3 text-white pointer-events-none">
+          <span className="font-heading text-2xl leading-none tabular-nums opacity-0 translate-y-2 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0 group-hover:delay-500">
+            {String(no).padStart(2, '0')}
+          </span>
+          <span className="hidden @[260px]:inline whitespace-nowrap text-[10px] uppercase tracking-[0.2em] text-white/80 opacity-0 translate-y-2 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0 group-hover:delay-[600ms]">
+            Lebak Siliwangi 2
+          </span>
+        </span>
       </div>
       <figcaption className="mt-3">
         {role && <p className="text-xs text-clay mb-0.5">{role}</p>}
-        <p className="font-heading text-base leading-snug">{m.name}</p>
+        <p className="font-heading text-base leading-snug">
+          <span className="bg-[linear-gradient(currentColor,currentColor)] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-[length:100%_1px]">
+            {m.name}
+          </span>
+        </p>
         <p className="text-sm text-muted">{m.jurusan}</p>
       </figcaption>
     </figure>
@@ -340,7 +359,7 @@ function AboutSection() {
           subtitle={t.teamSubtitle}
         />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
+        <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
           <Person m={ketua} role={t.roleLeader} />
           <Person m={sekretaris} role={t.roleSecretary} />
           <Person m={bendahara} role={t.roleTreasurer} />
@@ -352,7 +371,7 @@ function AboutSection() {
               <h3 className="text-2xl">{d.name}</h3>
               <span className="text-sm text-muted">{d.note} · {t.people(d.members.length)}</span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6">
+            <div className="team-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6">
               {d.members.map((m) => <Person key={m.name} m={m} />)}
             </div>
           </div>
