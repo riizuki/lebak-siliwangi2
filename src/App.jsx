@@ -24,8 +24,8 @@ function SectionHeader({ no, label, title, subtitle }) {
         <span className="text-clay">{no}</span> &nbsp;{label}
       </p>
       <div className="md:col-span-9">
-        <h2 className="text-[1.75rem] sm:text-4xl lg:text-[2.75rem] leading-[1.1] text-ink">{title}</h2>
-        {subtitle && <p className="mt-3 max-w-xl text-muted leading-relaxed">{subtitle}</p>}
+        <h2 className="text-[1.625rem] sm:text-4xl lg:text-[2.75rem] leading-[1.15] sm:leading-[1.1] text-ink">{title}</h2>
+        {subtitle && <p className="mt-3 max-w-xl text-[15px] sm:text-base text-muted leading-relaxed">{subtitle}</p>}
       </div>
     </div>
   );
@@ -212,12 +212,12 @@ function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
 
       <div className="relative max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 sm:pb-14">
-        <p className="text-sm text-white/75 mb-4">{HERO_CONTENT.badge}</p>
-        <h1 className="text-[2.1rem] sm:text-5xl lg:text-[4.25rem] leading-[1.08] sm:leading-[1.05] max-w-4xl">
+        <p className="text-xs sm:text-sm text-white/75 mb-3 sm:mb-4">{HERO_CONTENT.badge}</p>
+        <h1 className="text-[1.75rem] sm:text-5xl lg:text-[4.25rem] leading-[1.12] sm:leading-[1.05] max-w-4xl">
           {HERO_CONTENT.title}{' '}
           <span className="text-[#9fe3bf]">{HERO_CONTENT.titleHighlight}</span>
         </h1>
-        <p className="mt-6 max-w-2xl text-base sm:text-lg text-white/85 leading-relaxed">
+        <p className="mt-4 sm:mt-6 max-w-2xl text-[15px] sm:text-lg text-white/85 leading-relaxed">
           {HERO_CONTENT.description}
         </p>
 
@@ -346,9 +346,9 @@ function Person({ m, role, tag, caption = true, cursorType = 'person', cursorSub
 // Judul kelompok bergaris bawah: nama di kiri, keterangan di kanan
 function TeamGroupHeading({ title, note }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-line pb-3 mb-6">
-      <h3 className="text-xl sm:text-2xl">{title}</h3>
-      <span className="text-xs sm:text-sm text-muted text-right">{note}</span>
+    <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-4 border-b border-line pb-3 mb-5 sm:mb-6">
+      <h3 className="text-lg sm:text-2xl">{title}</h3>
+      <span className="text-xs sm:text-sm text-muted sm:text-right">{note}</span>
     </div>
   );
 }
@@ -377,9 +377,9 @@ function AboutSection() {
         <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
           <Person m={dpl} tag="DPL" caption={false} cursorType="mentor" cursorSub={DPL.role} />
           <div className="sm:col-span-2 flex flex-col justify-center sm:pl-6 lg:pl-10">
-            <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.16em] text-clay">{DPL.role}</p>
-            <p className="mt-2 font-heading text-lg sm:text-3xl leading-snug">{DPL.name}</p>
-            <p className="mt-1 text-xs sm:text-sm text-muted">{DPL.affiliation}</p>
+            <p className="text-[9px] sm:text-xs font-medium uppercase tracking-[0.14em] sm:tracking-[0.16em] text-clay">{DPL.role}</p>
+            <p className="mt-1.5 sm:mt-2 font-heading text-[15px] sm:text-3xl leading-snug">{DPL.name}</p>
+            <p className="mt-1 text-[11px] sm:text-sm text-muted">{DPL.affiliation}</p>
             <p className="hidden sm:block mt-5 max-w-lg text-muted leading-relaxed">{DPL.desc}</p>
           </div>
         </div>
@@ -442,8 +442,8 @@ function ProgramSection() {
                 <span className="md:col-span-1 font-heading text-2xl sm:text-3xl text-clay leading-none">{prog.id}</span>
                 <div className="md:col-span-7">
                   <p className="text-xs uppercase tracking-wide text-muted mb-2">{prog.category}</p>
-                  <h3 className="text-xl sm:text-2xl leading-snug mb-3">{prog.title}</h3>
-                  <p className="text-muted leading-relaxed max-w-xl">{prog.desc}</p>
+                  <h3 className="text-lg sm:text-2xl leading-snug mb-2 sm:mb-3">{prog.title}</h3>
+                  <p className="text-[15px] sm:text-base text-muted leading-relaxed max-w-xl">{prog.desc}</p>
                   {photosOf(prog).length > 0 && (
                     <div className="mt-5 grid grid-cols-4 gap-1.5 sm:gap-2.5">
                       {photosOf(prog).map((g, i, arr) => (
@@ -539,8 +539,8 @@ function LocationSection() {
 
           <div className="lg:col-span-5">
             <p className="text-sm text-clay mb-2">{loc.category}</p>
-            <h3 className="text-[1.375rem] sm:text-3xl leading-snug">{loc.name}</h3>
-            <p className="mt-3 text-muted leading-relaxed">{loc.desc}</p>
+            <h3 className="text-xl sm:text-3xl leading-snug">{loc.name}</h3>
+            <p className="mt-3 text-[15px] sm:text-base text-muted leading-relaxed">{loc.desc}</p>
 
             <dl className="mt-6 divide-y divide-line border-y border-line text-sm">
               {details.map(([k, v]) => (
@@ -927,7 +927,7 @@ function SummarySection() {
         {/* Timeline proker */}
         <div className="mt-16">
           <div className="flex items-baseline justify-between border-b border-line pb-3 mb-6">
-            <h3 className="text-xl sm:text-2xl">{t.timeline}</h3>
+            <h3 className="text-lg sm:text-2xl">{t.timeline}</h3>
             <span className="text-xs sm:text-sm text-muted">{t.timelineRange}</span>
           </div>
 
@@ -984,7 +984,7 @@ function SummarySection() {
         </div>
 
         <div className="mt-20">
-          <h3 className="text-xl sm:text-2xl border-b border-line pb-3">{t.divisionWork}</h3>
+          <h3 className="text-lg sm:text-2xl border-b border-line pb-3">{t.divisionWork}</h3>
           <div className="divide-y divide-line">
             {DIVISION_OUTCOMES.map((d) => (
               <div key={d.title} className="grid md:grid-cols-12 gap-2 md:gap-6 py-5 text-sm">
@@ -1023,7 +1023,7 @@ function PartnersSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
         <div className="lg:col-span-4">
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-clay mb-3">{t.partnersLabel}</p>
-          <h2 id="mitra-title" className="font-heading text-[1.375rem] sm:text-2xl md:text-3xl leading-tight">{t.partnersTitle}</h2>
+          <h2 id="mitra-title" className="font-heading text-xl sm:text-2xl md:text-3xl leading-tight">{t.partnersTitle}</h2>
           <p className="mt-3 text-sm text-muted leading-relaxed max-w-sm">{t.partnersDesc}</p>
         </div>
 
