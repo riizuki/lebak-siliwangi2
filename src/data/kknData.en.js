@@ -44,6 +44,12 @@ const MAJORS = {
   'S1 Ilmu Pemerintahan': 'Government Studies',
 };
 
+export const DPL = {
+  ...ID.DPL,
+  role: 'Field Supervisor',
+  desc: 'Guided us from planning the work programs and accompanying activities in the field to the final review with the village office and residents.',
+};
+
 export const TEAM_MEMBERS = ID.TEAM_MEMBERS.map((m) => ({
   ...m,
   role: ROLES[m.role] || m.role,

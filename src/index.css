@@ -137,6 +137,19 @@ h1, h2, h3, h4 {
   to { visibility: hidden; }
 }
 
+/* Cursor lencana emas DPL: cincin emas berkilau yang berputar + cahaya lembut */
+.cursor-mentor-ring {
+  background: conic-gradient(from 0deg, #fff1c1, #c8922e, #f5d77a, #8a5a14, #fff1c1, #c8922e, #f5d77a, #8a5a14, #fff1c1);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+  animation: cursor-orbit 3.5s linear infinite;
+}
+
+.cursor-mentor-glow {
+  background: radial-gradient(closest-side, transparent 70%, rgba(224, 176, 74, 0.35) 82%, transparent);
+  animation: cursor-logo-pulse 2.2s ease-in-out infinite;
+}
+
 /* Lightbox: latar dan foto muncul halus, foto bergeser sesuai arah navigasi */
 .lightbox {
   animation: lightbox-in 0.35s ease both;

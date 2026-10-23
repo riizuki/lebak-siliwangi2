@@ -298,12 +298,12 @@ function ActivityMarquee() {
 
 /* ── Struktur Tim ── */
 
-function Person({ m, role }) {
+function Person({ m, role, tag, caption = true, cursorType = 'person', cursorSub }) {
   const { TEAM_MEMBERS } = usePrefs();
   const no = TEAM_MEMBERS.findIndex((x) => x.name === m.name) + 1;
 
   return (
-    <figure data-cursor={m.nickname || m.name.split(' ')[0]} data-cursor-type="person" className="team-person group">
+    <figure data-cursor={m.nickname || m.name.split(' ')[0]} data-cursor-type={cursorType} data-cursor-sub={cursorSub} className="team-person group">
       <div className="@container relative aspect-[4/5] overflow-hidden rounded-xl bg-paper-2">
         {m.avatar ? (
           <img src={m.avatar} alt={m.name} className="w-full h-full object-cover object-[center_35%]" loading="lazy" />
@@ -323,14 +323,14 @@ function Person({ m, role }) {
         <span aria-hidden="true" className="absolute inset-[18px] pointer-events-none border border-white/30 opacity-0 transition-opacity duration-700 group-hover:opacity-100 group-hover:delay-500" />
         <span aria-hidden="true" className="absolute inset-x-7 bottom-7 flex items-end justify-between gap-3 text-white pointer-events-none">
           <span className="font-heading text-xl sm:text-2xl leading-none tabular-nums opacity-0 translate-y-2 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0 group-hover:delay-500">
-            {String(no).padStart(2, '0')}
+            {tag || String(no).padStart(2, '0')}
           </span>
           <span className="hidden @[260px]:inline whitespace-nowrap text-[10px] uppercase tracking-[0.2em] text-white/80 opacity-0 translate-y-2 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-hover:translate-y-0 group-hover:delay-[600ms]">
             Lebak Siliwangi 2
           </span>
         </span>
       </div>
-      <figcaption className="mt-3">
+      {caption && <figcaption className="mt-3">
         {role && <p className="text-xs text-clay mb-0.5">{role}</p>}
         <p className="font-heading text-base leading-snug">
           <span className="bg-[linear-gradient(currentColor,currentColor)] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-[length:100%_1px]">
@@ -338,14 +338,25 @@ function Person({ m, role }) {
           </span>
         </p>
         <p className="text-sm text-muted">{m.jurusan}</p>
-      </figcaption>
+      </figcaption>}
     </figure>
   );
 }
 
+// Judul kelompok bergaris bawah: nama di kiri, keterangan di kanan
+function TeamGroupHeading({ title, note }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 border-b border-line pb-3 mb-6">
+      <h3 className="text-xl sm:text-2xl">{title}</h3>
+      <span className="text-xs sm:text-sm text-muted text-right">{note}</span>
+    </div>
+  );
+}
+
 function AboutSection() {
-  const { TEAM_MEMBERS, t } = usePrefs();
+  const { TEAM_MEMBERS, DPL, t } = usePrefs();
   const [ketua, sekretaris, bendahara] = TEAM_MEMBERS;
+  const dpl = { name: DPL.name, nickname: DPL.nickname, avatar: DPL.photo, jurusan: DPL.affiliation };
   const divisions = [
     { name: t.divEvents, note: t.divEventsNote, members: TEAM_MEMBERS.slice(3, 6) },
     { name: t.divMedia, note: t.divMediaNote, members: TEAM_MEMBERS.slice(6, 11) },
@@ -361,18 +372,30 @@ function AboutSection() {
           subtitle={t.teamSubtitle}
         />
 
+        {/* Dosen Pembimbing Lapangan: foto seukuran kartu anggota + keterangan di sampingnya */}
+        <TeamGroupHeading title={t.divSupervisor} note={t.divSupervisorNote} />
         <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
-          <Person m={ketua} role={t.roleLeader} />
-          <Person m={sekretaris} role={t.roleSecretary} />
-          <Person m={bendahara} role={t.roleTreasurer} />
+          <Person m={dpl} tag="DPL" caption={false} cursorType="mentor" cursorSub={DPL.role} />
+          <div className="sm:col-span-2 flex flex-col justify-center sm:pl-6 lg:pl-10">
+            <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.16em] text-clay">{DPL.role}</p>
+            <p className="mt-2 font-heading text-lg sm:text-3xl leading-snug">{DPL.name}</p>
+            <p className="mt-1 text-xs sm:text-sm text-muted">{DPL.affiliation}</p>
+            <p className="hidden sm:block mt-5 max-w-lg text-muted leading-relaxed">{DPL.desc}</p>
+          </div>
+        </div>
+
+        <div className="mt-20">
+          <TeamGroupHeading title={t.divLeaders} note={`${t.divLeadersNote} · ${t.people(3)}`} />
+          <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
+            <Person m={ketua} role={t.roleLeader} />
+            <Person m={sekretaris} role={t.roleSecretary} />
+            <Person m={bendahara} role={t.roleTreasurer} />
+          </div>
         </div>
 
         {divisions.map((d) => (
           <div key={d.name} className="mt-20">
-            <div className="flex items-baseline justify-between border-b border-line pb-3 mb-6">
-              <h3 className="text-xl sm:text-2xl">{d.name}</h3>
-              <span className="text-xs sm:text-sm text-muted">{d.note} · {t.people(d.members.length)}</span>
-            </div>
+            <TeamGroupHeading title={d.name} note={`${d.note} · ${t.people(d.members.length)}`} />
             <div className="team-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6">
               {d.members.map((m) => <Person key={m.name} m={m} />)}
             </div>

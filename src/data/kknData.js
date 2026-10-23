@@ -24,6 +24,16 @@ export const HERO_CONTENT = {
   poskoImage: '/images/maggot-kelurahan.jpg',
 };
 
+// Dosen Pembimbing Lapangan
+export const DPL = {
+  name: 'Dr. Tatik Fidowaty, S.IP., M.Si.',
+  nickname: 'Bu Tatik',
+  role: 'Dosen Pembimbing Lapangan',
+  affiliation: 'Universitas Komputer Indonesia',
+  photo: '/images/tim/dpl.jpg',
+  desc: 'Membimbing kami sejak penyusunan program kerja, mendampingi kegiatan di lapangan, hingga evaluasi bersama kelurahan dan warga.',
+};
+
 export const TEAM_MEMBERS = [
   {
     name: 'Naufal Putra Firmansyah',

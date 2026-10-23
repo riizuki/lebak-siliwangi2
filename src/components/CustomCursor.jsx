@@ -15,6 +15,7 @@ const MAX_WRAP = { w: 320, h: 120 };
   - album    : tumpukan kartu polaroid berisi foto yang disorot + nomor urut (galeri beranda)
   - external : bulatan dengan panah ↗ (link yang membuka tab baru)
   - action   : cursor "menempel" dan membungkus bentuk tombol/link (efek magnet)
+  - mentor   : lencana emas eksklusif untuk DPL: cincin emas berkilau, peran melingkar, ikon toga + nama
   - logo     : cincin warna berputar + nama instansi melingkar, tertarik ke tengah logo (logo mitra)
 */
 export default function CustomCursor() {
@@ -135,6 +136,7 @@ export default function CustomCursor() {
         const d = labelEl.dataset;
         return set('logo', d.cursor, labelEl.querySelector('[data-logo-box]') || labelEl, d.cursorSub, d.cursorColor);
       }
+      if (labelEl?.dataset.cursorType === 'mentor') return set('mentor', labelEl.dataset.cursor, null, labelEl.dataset.cursorSub);
       if (labelEl?.dataset.cursorType === 'album') {
         const d = labelEl.dataset;
         return set('album', d.cursor, null, d.cursorCount, '', d.cursorImg);
@@ -187,6 +189,7 @@ export default function CustomCursor() {
     frame: 'w-0 h-0',
     album: 'w-0 h-0',
     shutter: 'w-0 h-0',
+    mentor: 'w-0 h-0',
   }[type] || (isClicking ? 'w-6 h-6' : 'w-9 h-9');
 
   const ringStyle = {
@@ -199,6 +202,7 @@ export default function CustomCursor() {
     frame: 'opacity-0 border-transparent',
     album: 'opacity-0 border-transparent',
     shutter: 'opacity-0 border-transparent',
+    mentor: 'opacity-0 border-transparent',
   }[type] || `${c.borderSoft}`;
 
   const show = (t) => (type === t ? 'opacity-100 scale-100' : 'opacity-0 scale-50');
@@ -297,6 +301,40 @@ export default function CustomCursor() {
           <span className="absolute left-1/2 -bottom-6 -translate-x-1/2 text-[10px] font-medium uppercase tracking-[0.2em] whitespace-nowrap">{type === 'frame' && hover.label}</span>
         </div>
 
+        {/* mentor: lencana emas eksklusif untuk DPL */}
+        <div
+          className={`absolute left-0 top-0 w-[132px] h-[132px] -translate-x-1/2 -translate-y-1/2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            type === 'mentor' ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 rotate-45'
+          }`}
+        >
+          <div className="cursor-mentor-glow absolute -inset-3 rounded-full" />
+          <div className="cursor-mentor-ring absolute inset-0 rounded-full" />
+          <div className="absolute inset-[3px] rounded-full bg-night/45 backdrop-blur-[3px]" />
+          <svg viewBox="0 0 100 100" className="cursor-orbit-reverse absolute inset-0 w-full h-full">
+            <defs>
+              <linearGradient id="cursor-mentor-gold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#fff1c1" />
+                <stop offset="50%" stopColor="#e0b04a" />
+                <stop offset="100%" stopColor="#fff1c1" />
+              </linearGradient>
+              <path id="cursor-mentor-path" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0" />
+            </defs>
+            <text className="text-[5.4px] font-semibold uppercase" fill="url(#cursor-mentor-gold)">
+              <textPath href="#cursor-mentor-path" textLength="250" lengthAdjust="spacing">
+                {type === 'mentor' && `${hover.sub} ✦ ${hover.sub} ✦ `}
+              </textPath>
+            </text>
+          </svg>
+          <div className="absolute inset-[30px] rounded-full bg-night/85 backdrop-blur-md border border-[#e0b04a]/50 shadow-[0_10px_30px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center gap-1 text-white">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#f0cb6b]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 9l10-5 10 5-10 5L2 9z" />
+              <path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+              <path d="M22 9v6" />
+            </svg>
+            <span className="font-heading text-[12px] leading-none whitespace-nowrap">{type === 'mentor' && hover.label}</span>
+          </div>
+        </div>
+
         {/* shutter: lingkaran putih berisi bukaan lensa kamera */}
         <div
           className={`absolute left-0 top-0 w-[72px] h-[72px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white text-night shadow-[0_12px_32px_rgba(0,0,0,0.28)] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
@@ -371,7 +409,7 @@ export default function CustomCursor() {
       >
         <div
           className={`rounded-full ${c.fill} transition-all duration-200 ${
-            ['person', 'view', 'external', 'logo', 'slide', 'frame', 'shutter'].includes(type)
+            ['person', 'view', 'external', 'logo', 'slide', 'frame', 'shutter', 'mentor'].includes(type)
               ? 'w-0 h-0'
               : type === 'action' ? 'w-1.5 h-1.5' : isClicking ? 'w-3 h-3' : 'w-2 h-2'
           }`}
