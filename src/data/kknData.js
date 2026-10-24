@@ -149,6 +149,7 @@ export const PROGRAMS = [
     status: 'selesai',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
     photos: ['kunjungan-bank-sampah', 'bank-sampah-gaslah', 'sosialisasi-pendampingan', 'sosialisasi-menjelaskan'],
+    model3d: '/models/bank-sampah.glb',
   },
   {
     id: '02',
@@ -162,6 +163,7 @@ export const PROGRAMS = [
     status: 'berjalan',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
     photos: ['pemilahan-bersama-gaslah', 'pemilahan-ember-organik', 'pemilahan-hasil-terkumpul', 'pemilahan-bank-sampah-rw05'],
+    model3d: '/models/gaslah.glb',
   },
   {
     id: '03',
