@@ -175,6 +175,7 @@ const GALLERY_TITLES = {
   'mesin-press-jadi': 'The assembled bottle & can press',
   'mencacah-bersama-ibu': 'Chopping organic waste with local mothers',
   'bank-sampah-induk': 'Visiting the Bandung City Central Waste Bank',
+  'rw05-biopori': 'Tidying up waste beside the vertical biopore plants at RW 05',
   'dinamo-pencacah': 'Mounting the motor on the shredder frame',
   'sosialisasi-menjelaskan': 'Explaining how to use the app to a resident',
   'pemilahan-hasil-terkumpul': 'Sorted waste ready for the waste bank',

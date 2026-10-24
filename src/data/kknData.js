@@ -148,7 +148,7 @@ export const PROGRAMS = [
     end: '2026-10-03',
     status: 'selesai',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
-    photos: ['kunjungan-bank-sampah', 'bank-sampah-gaslah', 'bank-sampah-induk', 'foto-tim'],
+    photos: ['kunjungan-bank-sampah', 'bank-sampah-gaslah', 'rw05-biopori', 'foto-tim'],
     model3d: '/models/bank-sampah.glb',
   },
   {
@@ -280,6 +280,7 @@ export const GALLERY_ITEMS = [
   { src: img('mesin-press-jadi'), category: 'alat', title: 'Mesin press botol & kaleng yang sudah dirakit', location: 'Lebak Siliwangi · Sep 2026' },
   { src: img('mencacah-bersama-ibu'), category: 'maggot', title: 'Mencacah sampah organik bersama ibu-ibu', location: 'Lebak Siliwangi · Okt 2026' },
   { src: img('bank-sampah-induk'), category: 'warga', title: 'Berkunjung ke Bank Sampah Induk Kota Bandung', location: 'Kota Bandung · Sep 2026' },
+  { src: img('rw05-biopori'), category: 'warga', title: 'Membereskan sampah di samping tanaman biopori vertikal RW 05', location: 'RW 05 · Okt 2026' },
   { src: img('dinamo-pencacah'), category: 'alat', title: 'Memasang dinamo pada rangka mesin pencacah', location: 'Lebak Siliwangi · Okt 2026' },
   { src: img('sosialisasi-menjelaskan'), category: 'sosialisasi', title: 'Menjelaskan cara memakai aplikasi kepada warga', location: 'Lebak Siliwangi · Sep 2026' },
   { src: img('pemilahan-hasil-terkumpul'), category: 'pemilahan', title: 'Sampah hasil pemilahan siap dibawa ke bank sampah', location: 'RW 05 · Sep 2026' },
