@@ -31,6 +31,11 @@ export const UI = {
     model3dTitle: 'Model 3D',
     model3dHint: 'Geser untuk memutar, cubit atau scroll untuk zoom',
     model3dLoading: 'Memuat model 3D…',
+    model3dPause: 'Jeda',
+    model3dPlay: 'Putar',
+    model3dReset: 'Atur ulang',
+    model3dFull: 'Layar penuh',
+    model3dExitFull: 'Keluar',
     cursorOpen: 'Buka foto',
 
     teamLabel: 'Struktur Tim',
@@ -133,6 +138,11 @@ export const UI = {
     model3dTitle: '3D model',
     model3dHint: 'Drag to rotate, pinch or scroll to zoom',
     model3dLoading: 'Loading 3D model…',
+    model3dPause: 'Pause',
+    model3dPlay: 'Rotate',
+    model3dReset: 'Reset',
+    model3dFull: 'Fullscreen',
+    model3dExitFull: 'Exit',
     cursorOpen: 'Open photo',
 
     teamLabel: 'Team',

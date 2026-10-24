@@ -414,47 +414,149 @@ const STATUS = {
   rencana: { key: 'statusPlanned', cls: 'bg-paper-2 text-muted border border-line' },
 };
 
-/* ── Viewer model 3D (model-viewer dimuat saat dibutuhkan saja) ── */
+/* ── Viewer model 3D (model-viewer dimuat saat mendekati layar) ── */
 
 function ModelViewer({ src, name }) {
   const { t } = usePrefs();
-  const [ready, setReady] = useState(false);
+  const stageRef = useRef(null);
+  const viewerRef = useRef(null);
+  const [near, setNear] = useState(false);     // sudah dekat layar → muat library + model
+  const [ready, setReady] = useState(false);   // library siap
+  const [progress, setProgress] = useState(0); // 0..1 unduhan model
+  const [loaded, setLoaded] = useState(false);
+  const [rotate, setRotate] = useState(true);
+  const [touched, setTouched] = useState(false);
+  const [full, setFull] = useState(false);
+  const canFull = typeof document !== 'undefined' && !!document.documentElement.requestFullscreen;
+
+  // Mulai memuat ketika stage mendekati layar
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el || !('IntersectionObserver' in window)) return setNear(true);
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && (setNear(true), io.disconnect()), { rootMargin: '300px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
+    if (!near) return;
     let alive = true;
     import('@google/model-viewer').then(() => alive && setReady(true));
     return () => { alive = false; };
+  }, [near]);
+
+  useEffect(() => {
+    const mv = viewerRef.current;
+    if (!ready || !mv) return;
+    const onProgress = (e) => setProgress(e.detail.totalProgress);
+    const onLoad = () => setLoaded(true);
+    const onCamera = (e) => { if (e.detail.source === 'user-interaction') setTouched(true); };
+    mv.addEventListener('progress', onProgress);
+    mv.addEventListener('load', onLoad);
+    mv.addEventListener('camera-change', onCamera);
+    return () => {
+      mv.removeEventListener('progress', onProgress);
+      mv.removeEventListener('load', onLoad);
+      mv.removeEventListener('camera-change', onCamera);
+    };
+  }, [ready]);
+
+  useEffect(() => {
+    const onFs = () => setFull(document.fullscreenElement === stageRef.current);
+    document.addEventListener('fullscreenchange', onFs);
+    return () => document.removeEventListener('fullscreenchange', onFs);
   }, []);
+
+  const reset = () => {
+    const mv = viewerRef.current;
+    if (!mv) return;
+    mv.cameraOrbit = 'auto auto auto';
+    mv.cameraTarget = 'auto auto auto';
+    mv.fieldOfView = 'auto';
+    mv.jumpCameraToGoal();
+    setRotate(true);
+  };
+
+  const toggleFull = () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else stageRef.current?.requestFullscreen();
+  };
 
   return (
     <figure className="mt-5">
       <div
+        ref={stageRef}
         data-cursor={t.cursorRotate}
         data-cursor-sub={t.cursorDrag}
         data-cursor-type="orbit"
-        className="relative aspect-[4/3] sm:aspect-[16/9] overflow-hidden rounded-lg bg-paper-2 border border-line"
+        className="relative aspect-[5/4] overflow-hidden rounded-xl border border-line bg-paper-2"
       >
-        {ready ? (
+        {/* sorotan hijau di belakang model */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse 60% 55% at 50% 62%, color-mix(in srgb, var(--color-clay) 30%, transparent), transparent 72%)' }}
+        />
+
+        {ready && (
           <model-viewer
+            ref={viewerRef}
             src={src}
             alt={`${t.model3dTitle} ${name}`}
             camera-controls
-            auto-rotate
-            auto-rotate-delay="1500"
+            {...(rotate ? { 'auto-rotate': true } : {})}
+            auto-rotate-delay="1200"
+            rotation-per-second="18deg"
             touch-action="pan-y"
-            shadow-intensity="1"
-            exposure="1"
+            camera-orbit="35deg 70deg auto"
+            min-field-of-view="18deg"
+            max-field-of-view="50deg"
+            environment-image="neutral"
+            shadow-intensity="1.1"
+            shadow-softness="0.9"
+            exposure="1.05"
             interaction-prompt="none"
-            loading="lazy"
-            style={{ width: '100%', height: '100%', background: 'transparent', '--poster-color': 'transparent' }}
+            reveal="auto"
+            style={{
+              position: 'absolute', left: 0, top: 0, width: '100%', height: 'calc(100% - 44px)',
+              background: 'transparent', '--poster-color': 'transparent',
+              opacity: loaded ? 1 : 0, transition: 'opacity 0.7s ease',
+            }}
           />
-        ) : (
-          <p className="absolute inset-0 grid place-items-center text-sm text-muted">{t.model3dLoading}</p>
         )}
+
+        {/* label + tombol kontrol */}
+        <div className="absolute left-4 top-3.5 sm:left-5 sm:top-4 right-4 pointer-events-none">
+          <p className="text-[10px] uppercase tracking-[0.24em] text-muted">{t.model3dTitle}</p>
+          <p className="mt-0.5 font-heading text-base sm:text-lg leading-tight text-ink truncate">{name}</p>
+        </div>
+
+        {/* bar kemajuan saat model diunduh */}
+        {!loaded && (
+          <div className="absolute inset-0 grid place-items-center">
+            <div className="w-40 text-center">
+              <p className="text-xs text-muted mb-2">{t.model3dLoading}</p>
+              <div className="h-1 rounded-full bg-line overflow-hidden">
+                <div className="h-full bg-clay transition-[width] duration-300" style={{ width: `${Math.max(8, progress * 100)}%` }} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* baris bawah: petunjuk + kontrol teks */}
+        <div className="absolute inset-x-0 bottom-0 h-11 px-4 sm:px-5 flex items-center justify-between border-t border-line/80 text-[11px] text-muted" data-cursor-none>
+          <span className={`hidden sm:block transition-opacity duration-500 ${loaded && !touched ? 'opacity-100' : 'opacity-0'}`}>{t.model3dHint}</span>
+          <span className="flex items-center gap-4 ml-auto">
+            <button type="button" onClick={() => setRotate((r) => !r)} aria-pressed={rotate} className="hover:text-ink transition-colors">
+              {rotate ? t.model3dPause : t.model3dPlay}
+            </button>
+            <button type="button" onClick={reset} className="hover:text-ink transition-colors">{t.model3dReset}</button>
+            {canFull && (
+              <button type="button" onClick={toggleFull} className="hover:text-ink transition-colors">{full ? t.model3dExitFull : t.model3dFull}</button>
+            )}
+          </span>
+        </div>
       </div>
-      <figcaption className="mt-2 text-xs text-muted">
-        <span className="font-medium text-ink">{t.model3dTitle} {name}</span> · {t.model3dHint}
-      </figcaption>
     </figure>
   );
 }
