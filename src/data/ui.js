@@ -26,6 +26,11 @@ export const UI = {
     viewGallery: 'Lihat galeri',
     cursorGallery: 'Galeri',
     cursorView: 'Lihat',
+    cursorRotate: 'Putar 3D',
+    cursorDrag: 'Geser',
+    model3dTitle: 'Model 3D',
+    model3dHint: 'Geser untuk memutar, cubit atau scroll untuk zoom',
+    model3dLoading: 'Memuat model 3D…',
     cursorOpen: 'Buka foto',
 
     teamLabel: 'Struktur Tim',
@@ -123,6 +128,11 @@ export const UI = {
     viewGallery: 'View gallery',
     cursorGallery: 'Gallery',
     cursorView: 'View',
+    cursorRotate: 'Rotate 3D',
+    cursorDrag: 'Drag',
+    model3dTitle: '3D model',
+    model3dHint: 'Drag to rotate, pinch or scroll to zoom',
+    model3dLoading: 'Loading 3D model…',
     cursorOpen: 'Open photo',
 
     teamLabel: 'Team',

@@ -9,6 +9,7 @@ const MAX_WRAP = { w: 320, h: 120 };
   Jenis efek hover:
   - person   : lingkaran besar berisi nama + teks melingkar berputar (kartu anggota tim)
   - view     : lingkaran kaca buram + ikon perbesar + label (halaman galeri, gambar lain, peta)
+  - orbit    : lingkaran gelap berisi ikon orbit 3D yang berputar + label (model 3D, bisa diputar dengan drag)
   - slide    : kapsul berisi label + panah yang terus bergeser (foto berjalan di Dokumentasi)
   - frame    : bingkai jendela bidik kamera + titik REC berkedip (foto program kerja)
   - shutter  : lingkaran putih berisi bukaan lensa kamera yang terbuka saat masuk foto dan "menjepret" saat diklik (halaman galeri)
@@ -141,6 +142,7 @@ export default function CustomCursor() {
         const d = labelEl.dataset;
         return set('album', d.cursor, null, d.cursorCount, '', d.cursorImg);
       }
+      if (labelEl?.dataset.cursorType === 'orbit') return set('orbit', labelEl.dataset.cursor, null, labelEl.dataset.cursorSub);
       if (labelEl) return set(labelEl.dataset.cursorType || 'view', labelEl.dataset.cursor);
 
       const link = t.closest('a, button, input, textarea, select, [role="button"]');
@@ -186,6 +188,7 @@ export default function CustomCursor() {
     action: 'w-12 h-12',
     logo: 'w-[148px] h-[148px]',
     slide: 'w-0 h-0',
+    orbit: 'w-0 h-0',
     frame: 'w-0 h-0',
     album: 'w-0 h-0',
     shutter: 'w-0 h-0',
@@ -199,6 +202,7 @@ export default function CustomCursor() {
     action: `${c.fillSoft} ${c.border} border-[1.5px]`,
     logo: 'opacity-0 border-transparent',
     slide: 'opacity-0 border-transparent',
+    orbit: 'opacity-0 border-transparent',
     frame: 'opacity-0 border-transparent',
     album: 'opacity-0 border-transparent',
     shutter: 'opacity-0 border-transparent',
@@ -266,6 +270,22 @@ export default function CustomCursor() {
               </textPath>
             </text>
           </svg>
+        </div>
+
+        {/* orbit: lingkaran gelap berisi orbit 3D yang berputar, mengecil saat model digenggam */}
+        <div
+          className={`absolute left-0 top-0 w-[84px] h-[84px] -translate-x-1/2 -translate-y-1/2 rounded-full flex flex-col items-center justify-center gap-1 text-white bg-night/80 backdrop-blur-md border border-white/25 shadow-[0_12px_32px_rgba(0,0,0,0.3)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            type === 'orbit' ? (isClicking ? 'opacity-100 scale-[0.82]' : 'opacity-100 scale-100') : 'opacity-0 scale-50'
+          }`}
+        >
+          <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="16" cy="16" r="4" className="fill-current opacity-90" stroke="none" />
+            <ellipse cx="16" cy="16" rx="13" ry="5.5" transform="rotate(-20 16 16)" opacity="0.55" />
+            <g className={isClicking ? 'cursor-orbit-fast' : 'cursor-orbit-dot'} style={{ transformOrigin: '16px 16px' }}>
+              <circle cx="29" cy="16" r="2" className="fill-current" stroke="none" />
+            </g>
+          </svg>
+          <span className="text-[9px] font-medium uppercase tracking-[0.18em] whitespace-nowrap">{type === 'orbit' && (isClicking ? hover.sub || hover.label : hover.label)}</span>
         </div>
 
         {/* slide: kapsul berisi label + panah yang terus bergeser */}
@@ -409,7 +429,7 @@ export default function CustomCursor() {
       >
         <div
           className={`rounded-full ${c.fill} transition-all duration-200 ${
-            ['person', 'view', 'external', 'logo', 'slide', 'frame', 'shutter', 'mentor'].includes(type)
+            ['person', 'view', 'external', 'logo', 'slide', 'orbit', 'frame', 'shutter', 'mentor'].includes(type)
               ? 'w-0 h-0'
               : type === 'action' ? 'w-1.5 h-1.5' : isClicking ? 'w-3 h-3' : 'w-2 h-2'
           }`}

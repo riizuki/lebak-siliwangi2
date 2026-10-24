@@ -414,6 +414,51 @@ const STATUS = {
   rencana: { key: 'statusPlanned', cls: 'bg-paper-2 text-muted border border-line' },
 };
 
+/* ── Viewer model 3D (model-viewer dimuat saat dibutuhkan saja) ── */
+
+function ModelViewer({ src, name }) {
+  const { t } = usePrefs();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    import('@google/model-viewer').then(() => alive && setReady(true));
+    return () => { alive = false; };
+  }, []);
+
+  return (
+    <figure className="mt-5">
+      <div
+        data-cursor={t.cursorRotate}
+        data-cursor-sub={t.cursorDrag}
+        data-cursor-type="orbit"
+        className="relative aspect-[4/3] sm:aspect-[16/9] overflow-hidden rounded-lg bg-paper-2 border border-line"
+      >
+        {ready ? (
+          <model-viewer
+            src={src}
+            alt={`${t.model3dTitle} ${name}`}
+            camera-controls
+            auto-rotate
+            auto-rotate-delay="1500"
+            touch-action="pan-y"
+            shadow-intensity="1"
+            exposure="1"
+            interaction-prompt="none"
+            loading="lazy"
+            style={{ width: '100%', height: '100%', background: 'transparent', '--poster-color': 'transparent' }}
+          />
+        ) : (
+          <p className="absolute inset-0 grid place-items-center text-sm text-muted">{t.model3dLoading}</p>
+        )}
+      </div>
+      <figcaption className="mt-2 text-xs text-muted">
+        <span className="font-medium text-ink">{t.model3dTitle} {name}</span> · {t.model3dHint}
+      </figcaption>
+    </figure>
+  );
+}
+
 function ProgramSection() {
   const { PROGRAMS, GALLERY_ITEMS, t } = usePrefs();
   const [open, setOpen] = useState(null); // { items, index }
@@ -461,6 +506,7 @@ function ProgramSection() {
                       ))}
                     </div>
                   )}
+                  {prog.model3d && <ModelViewer src={prog.model3d} name={prog.shortTitle} />}
                 </div>
                 <dl className="md:col-span-4 md:pl-6 md:border-l border-line text-sm space-y-3 md:pt-6">
                   <div>

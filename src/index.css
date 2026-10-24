@@ -243,3 +243,12 @@ h1, h2, h3, h4 {
     --row-h: 200px;
   }
 }
+
+/* Titik pada cursor orbit 3D mengelilingi pusat; makin cepat saat model digenggam */
+.cursor-orbit-dot {
+  animation: cursor-orbit 3s linear infinite;
+}
+
+.cursor-orbit-fast {
+  animation: cursor-orbit 0.9s linear infinite;
+}

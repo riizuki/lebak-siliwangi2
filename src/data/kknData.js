@@ -175,6 +175,7 @@ export const PROGRAMS = [
     status: 'selesai',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
     photos: ['memotong-besi-press', 'mengebor-plat-press', 'merakit-press-bersama', 'mesin-press-jadi'],
+    model3d: '/models/alat-press.glb',
   },
   {
     id: '04',
@@ -188,6 +189,7 @@ export const PROGRAMS = [
     status: 'selesai',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
     photos: ['rangka-pencacah', 'dinamo-pencacah', 'merakit-rangka', 'merakit-wadah-pencacah'],
+    model3d: '/models/pencacah-daun.glb',
   },
 ];
 
