@@ -16,8 +16,8 @@ const inlineCss = () => ({
       html.source = html.source.replace(tag, () => `<style>${css.source}</style>`);
       delete bundle[css.fileName];
     }
-    // Preload font latin utama supaya teks cepat tampil dengan font yang benar
-    const fonts = Object.values(bundle).filter((f) => /(geist|bricolage-grotesque)-latin-(wght|opsz)-normal.*\.woff2$/.test(f.fileName));
+    // Preload font teks (Geist latin) saja; font judul cukup dimuat biasa supaya tidak berebut bandwidth
+    const fonts = Object.values(bundle).filter((f) => /geist-latin-wght-normal.*\.woff2$/.test(f.fileName));
     const preload = fonts.map((f) => `<link rel="preload" as="font" type="font/woff2" href="/${f.fileName}" crossorigin>`).join('');
     html.source = html.source.replace('</title>', `</title>${preload}`);
   },

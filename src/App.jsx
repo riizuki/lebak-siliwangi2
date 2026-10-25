@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faBars, faXmark, faArrowRight, faArrowUp, faArrowUpRightFromSquare,
-  faLocationDot, faGlobe, faSun, faMoon
-} from '@fortawesome/free-solid-svg-icons';
-import { faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
+  FontAwesomeIcon, faBars, faXmark, faArrowRight, faArrowUp, faArrowUpRightFromSquare,
+  faLocationDot, faGlobe, faSun, faMoon, faInstagram, faYoutube,
+} from './components/Icon';
 
 import { createPortal } from 'react-dom';
 import { usePrefs } from './preferences';
@@ -80,7 +78,9 @@ function SiteControls({ solid = true }) {
           solid ? 'bg-paper-2 text-ink hover:bg-line' : 'bg-white/10 backdrop-blur-md text-white hover:bg-white/20'
         }`}
       >
-        <FontAwesomeIcon icon={dark ? faSun : faMoon} className="text-sm" />
+        {/* Ikon mengikuti kelas .dark di <html> (dipasang sebelum React jalan), jadi tidak berkedip saat hydrate */}
+        <FontAwesomeIcon icon={faSun} className="text-sm hidden dark:inline-block" />
+        <FontAwesomeIcon icon={faMoon} className="text-sm dark:hidden" />
       </button>
     </div>
   );
@@ -206,6 +206,8 @@ function HeroSection() {
     <section id="beranda" className="relative min-h-[100svh] flex flex-col justify-end bg-night text-white overflow-hidden">
       <img
         src={HERO_CONTENT.poskoImage}
+        // Prioritas rendah: foto latar besar jangan berebut bandwidth dengan teks, font, dan JS
+        fetchPriority="low"
         alt={t.heroAlt}
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -437,7 +439,9 @@ function ModelViewer({ src, name }) {
   const [rotate, setRotate] = useState(true);
   const [touched, setTouched] = useState(false);
   const [full, setFull] = useState(false);
-  const canFull = typeof document !== 'undefined' && !!document.documentElement.requestFullscreen;
+  // Dicek setelah mount supaya HTML prerender dan hydrate sama
+  const [canFull, setCanFull] = useState(false);
+  useEffect(() => setCanFull(!!document.documentElement.requestFullscreen), []);
 
   // Mulai memuat ketika stage mendekati layar
   useEffect(() => {
@@ -1076,8 +1080,10 @@ const label = 'text-[10.5px] uppercase tracking-[0.16em]';
 
 function ProgramTimeline() {
   const { PROGRAMS, t } = usePrefs();
-  const now = new Date();
-  const todayPct = now >= TIMELINE_START && now < TIMELINE_END ? toPct(now) : null;
+  // Tanggal hari ini baru diisi di browser (HTML prerender dibuat saat build)
+  const [now, setNow] = useState(null);
+  useEffect(() => setNow(new Date()), []);
+  const todayPct = now && now >= TIMELINE_START && now < TIMELINE_END ? toPct(now) : null;
   const ongoing = PROGRAMS.some((p) => p.status !== 'selesai');
 
   return (
@@ -1399,9 +1405,10 @@ function Footer() {
   );
 }
 
-const isGalleryRoute = () => window.location.pathname.replace(/\/+$/, '') === '/galeri';
+const isGalleryRoute = () => /^\/galeri(\.html)?$/.test(window.location.pathname.replace(/\/+$/, ''));
 
-export default function App() {
+// `gallery` diisi saat prerender (scripts/prerender.mjs); di browser dibaca dari URL
+export default function App({ gallery = isGalleryRoute() }) {
   const { t } = usePrefs();
 
   // Datang dari /galeri lewat link "/#galeri": gulir ke section setelah halaman tampil
@@ -1410,10 +1417,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!isGalleryRoute()) document.title = t.metaTitle;
-  }, [t]);
+    if (!gallery) document.title = t.metaTitle;
+  }, [t, gallery]);
 
-  if (isGalleryRoute()) return <GalleryPage />;
+  if (gallery) return <GalleryPage />;
 
   return (
     <div className="min-h-screen">

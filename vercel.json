@@ -1,3 +1,3 @@
 {
-  "rewrites": [{ "source": "/galeri", "destination": "/index.html" }]
+  "rewrites": [{ "source": "/galeri", "destination": "/galeri.html" }]
 }

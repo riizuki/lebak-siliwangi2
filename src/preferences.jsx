@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 import * as DATA_ID from './data/kknData';
 import * as DATA_EN from './data/kknData.en';
@@ -30,19 +30,30 @@ const initialTheme = () => {
 const PreferencesContext = createContext(null);
 
 export function PreferencesProvider({ children }) {
-  const [lang, setLang] = useState(() => (read('lang') === 'en' ? 'en' : 'id'));
-  const [theme, setTheme] = useState(initialTheme);
+  // Render awal selalu 'id' + 'light' agar sama dengan HTML prerender; preferensi tersimpan
+  // diterapkan setelah hydrate. Warna gelap sudah dipasang skrip di index.html sebelum halaman tampil.
+  const [lang, setLang] = useState('id');
+  const [theme, setTheme] = useState('light');
+  const ready = useRef(false);
 
   useEffect(() => {
+    if (!ready.current) return;
     document.documentElement.lang = lang;
     write('lang', lang);
   }, [lang]);
 
   useEffect(() => {
+    if (!ready.current) return;
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0e1411' : '#ffffff');
     write('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    ready.current = true;
+    setLang(read('lang') === 'en' ? 'en' : 'id');
+    setTheme(initialTheme());
+  }, []);
 
   const value = {
     lang,
