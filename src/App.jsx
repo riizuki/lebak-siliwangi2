@@ -1047,10 +1047,121 @@ function GalleryPage() {
 
 /* ── Ringkasan ── */
 
+const DAY = 86400000;
 const TIMELINE_START = new Date('2026-09-01');
-const TIMELINE_END = new Date('2026-10-31');
+const TIMELINE_END = new Date('2026-11-01'); // batas akhir eksklusif: 31 Okt ikut penuh
 const toPct = (d) => ((new Date(d) - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
+const endPct = (d) => toPct(new Date(d).getTime() + DAY);
+const daysOf = (p) => Math.round((new Date(p.end) - new Date(p.start)) / DAY) + 1;
+const OCT_PCT = toPct('2026-10-01');
+const WEEK_TICKS = ['2026-09-08', '2026-09-15', '2026-09-22', '2026-09-29', '2026-10-06', '2026-10-13', '2026-10-20', '2026-10-27'];
 const fmtDay = (d, locale) => new Date(d).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+
+/* Latar & garis bantu di belakang batang: Oktober diberi warna lain, garis per minggu, garis hari ini */
+function TimelineGrid({ todayPct }) {
+  return (
+    <span aria-hidden="true" className="absolute inset-0 pointer-events-none">
+      <span className="absolute inset-y-0 right-0 bg-paper-2/60" style={{ left: `${OCT_PCT}%` }} />
+      <span className="hidden sm:block absolute inset-y-0 left-0 w-px bg-line" />
+      {WEEK_TICKS.map((d) => (
+        <span key={d} className="hidden sm:block absolute inset-y-0 w-px bg-line/50" style={{ left: `${toPct(d)}%` }} />
+      ))}
+      <span className="absolute inset-y-0 w-px bg-line" style={{ left: `${OCT_PCT}%` }} />
+      {todayPct !== null && <span className="absolute inset-y-0 w-px bg-ink/70" style={{ left: `${todayPct}%` }} />}
+    </span>
+  );
+}
+
+const label = 'text-[10.5px] uppercase tracking-[0.16em]';
+
+function ProgramTimeline() {
+  const { PROGRAMS, t } = usePrefs();
+  const now = new Date();
+  const todayPct = now >= TIMELINE_START && now < TIMELINE_END ? toPct(now) : null;
+  const ongoing = PROGRAMS.some((p) => p.status !== 'selesai');
+
+  return (
+    <div className="mt-16">
+      <div className="flex items-baseline justify-between border-b border-line pb-3">
+        <h3 className="text-lg sm:text-2xl">{t.timeline}</h3>
+        <span className="text-xs sm:text-sm text-muted">{t.timelineRange}</span>
+      </div>
+
+      {/* Sumbu bulan + penanda hari ini */}
+      <div className="grid sm:grid-cols-[38%_1fr]">
+        <span className="hidden sm:block" />
+        <div className={`relative h-10 ${label} text-muted`}>
+          <TimelineGrid todayPct={todayPct} />
+          <span className="absolute left-2 top-1/2 -translate-y-1/2">
+            <span className="sm:hidden">{t.sepShort}</span><span className="hidden sm:inline">{t.september}</span>
+          </span>
+          <span className="absolute top-1/2 -translate-y-1/2 pl-2" style={{ left: `${OCT_PCT}%` }}>
+            <span className="sm:hidden">{t.octShort}</span><span className="hidden sm:inline">{t.october}</span>
+          </span>
+          {todayPct !== null && (
+            // Di paruh akhir label diletakkan di kiri garis supaya tidak terpotong tepi
+            <span
+              className={`absolute top-1/2 -translate-y-1/2 whitespace-nowrap bg-paper-2 ${todayPct > 50 ? 'pr-2 text-right' : 'pl-2'}`}
+              style={todayPct > 50 ? { right: `${100 - todayPct}%` } : { left: `${todayPct}%` }}
+            >
+              <span className="text-ink tabular-nums">{fmtDay(now, t.dateLocale)}</span>
+              <span className="hidden sm:inline text-muted"> — {t.today}</span>
+            </span>
+          )}
+        </div>
+      </div>
+
+      <ul>
+        {PROGRAMS.map((p) => {
+          const left = toPct(p.start);
+          const right = endPct(p.end);
+          const span = right - left;
+          const done = p.status === 'selesai';
+          // Program berjalan: bagian sebelum hari ini garis penuh, sisanya garis putus-putus
+          const passed = !done && todayPct !== null ? Math.min(Math.max(todayPct - left, 0), span) : span;
+          const progress = Math.round((passed / span) * 100);
+          return (
+            <li key={p.id} className="grid sm:grid-cols-[38%_1fr] border-t border-line">
+              <div className="pt-4 pb-2 sm:py-5 sm:pr-6">
+                <p className="text-sm sm:text-[15px] font-medium leading-snug">
+                  <span className="text-muted mr-2.5 tabular-nums font-normal">{p.id}</span>
+                  {p.title}
+                </p>
+                <div className="mt-2 flex items-baseline justify-between gap-3 text-xs text-muted">
+                  <span className="tabular-nums">
+                    {fmtDay(p.start, t.dateLocale)} – {fmtDay(p.end, t.dateLocale)}
+                    <span aria-hidden="true" className="mx-1.5 opacity-50">/</span>
+                    {t.days(daysOf(p))}
+                  </span>
+                  <span className={`${label} shrink-0 ${done ? 'text-muted' : 'text-moss dark:text-clay'}`}>
+                    {done ? t.statusDone : `${t.statusOngoing} ${progress}%`}
+                  </span>
+                </div>
+              </div>
+              <div className="relative h-9 sm:h-auto mb-3 sm:mb-0">
+                <TimelineGrid todayPct={todayPct} />
+                <span className="absolute top-1/2 -translate-y-1/2 h-1.5 min-w-1.5" style={{ left: `${left}%`, width: `${span}%` }}>
+                  <span className={`absolute inset-y-0 left-0 rounded-[1px] ${done ? 'bg-moss' : 'bg-clay'}`} style={{ width: `${(passed / span) * 100}%` }} />
+                  {!done && (
+                    <span className="absolute right-0 top-1/2 border-t border-dashed border-clay" style={{ left: `${(passed / span) * 100}%` }} />
+                  )}
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Keterangan */}
+      <div className="flex flex-wrap gap-x-6 gap-y-2 pt-4 border-t border-line text-xs text-muted">
+        <span className="flex items-center gap-2"><span className="w-5 h-1.5 rounded-[1px] bg-moss" />{t.statusDone}</span>
+        {ongoing && <span className="flex items-center gap-2"><span className="w-5 h-1.5 rounded-[1px] bg-clay" />{t.statusOngoing}</span>}
+        {ongoing && <span className="flex items-center gap-2"><span className="w-5 border-t border-dashed border-clay" />{t.remaining}</span>}
+        {todayPct !== null && <span className="flex items-center gap-2"><span className="w-px h-3.5 bg-ink/70" />{t.today}</span>}
+      </div>
+    </div>
+  );
+}
 
 function SummarySection() {
   const { PROGRAMS, TEAM_MEMBERS, DIVISION_OUTCOMES, t } = usePrefs();
@@ -1084,63 +1195,7 @@ function SummarySection() {
         </div>
 
         {/* Timeline proker */}
-        <div className="mt-16">
-          <div className="flex items-baseline justify-between border-b border-line pb-3 mb-6">
-            <h3 className="text-lg sm:text-2xl">{t.timeline}</h3>
-            <span className="text-xs sm:text-sm text-muted">{t.timelineRange}</span>
-          </div>
-
-          <div className="relative">
-            <div className="hidden sm:flex absolute inset-0 left-[38%] pointer-events-none">
-              <span className="absolute left-1/2 top-0 bottom-0 w-px bg-line" />
-            </div>
-            <div className="hidden sm:grid grid-cols-[38%_1fr] text-xs text-muted mb-3">
-              <span />
-              <div className="flex justify-between">
-                <span>{t.september}</span>
-                <span className="w-1/2">{t.october}</span>
-              </div>
-            </div>
-
-            {/* Sumbu bulan versi mobile */}
-            <div className="sm:hidden relative h-5 mb-2 text-[11px] text-muted">
-              <span className="absolute left-0">{t.sepShort}</span>
-              <span className="absolute left-1/2 pl-1.5 border-l border-line">{t.octShort}</span>
-            </div>
-
-            <ul className="space-y-5 sm:space-y-3">
-              {PROGRAMS.map((p) => {
-                const left = toPct(p.start);
-                const width = Math.max(toPct(p.end) - left, 2);
-                return (
-                  <li key={p.id} className="sm:grid grid-cols-[38%_1fr] items-center gap-0">
-                    <div className="flex items-start justify-between gap-3 mb-2 sm:mb-0 sm:block">
-                      <p className="text-sm sm:pr-6 leading-snug sm:leading-5">
-                        <span className="text-clay mr-2">{p.id}</span>
-                        {p.title}
-                      </p>
-                      <span className="sm:hidden shrink-0 text-[11px] text-muted tabular-nums pt-0.5">
-                        {fmtDay(p.start, t.dateLocale)} – {fmtDay(p.end, t.dateLocale)}
-                      </span>
-                    </div>
-                    <div className="relative h-2.5 sm:h-7 rounded-full bg-paper-2">
-                      <span className="sm:hidden absolute left-1/2 -top-1 -bottom-1 w-px bg-line" />
-                      <span
-                        className={`absolute inset-y-0 sm:top-1 sm:bottom-1 min-w-2.5 sm:min-w-0 rounded-full ${p.status === 'selesai' ? 'bg-moss' : 'bg-clay'}`}
-                        style={{ left: `${left}%`, width: `${width}%` }}
-                      />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <div className="flex gap-5 mt-5 text-xs text-muted">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-full bg-moss" />{t.statusDone}</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-full bg-clay" />{t.statusOngoing}</span>
-            </div>
-          </div>
-        </div>
+        <ProgramTimeline />
 
         <div className="mt-20">
           <h3 className="text-lg sm:text-2xl border-b border-line pb-3">{t.divisionWork}</h3>

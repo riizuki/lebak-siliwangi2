@@ -99,6 +99,9 @@ export const UI = {
     october: 'Oktober',
     sepShort: 'Sep',
     octShort: 'Okt',
+    today: 'Hari ini',
+    remaining: 'Sisa jadwal',
+    days: (n) => `${n} hari`,
     divisionWork: 'Pembagian kerja per divisi',
     dateLocale: 'id-ID',
 
@@ -206,6 +209,9 @@ export const UI = {
     october: 'October',
     sepShort: 'Sep',
     octShort: 'Oct',
+    today: 'Today',
+    remaining: 'Remaining',
+    days: (n) => `${n} ${n === 1 ? 'day' : 'days'}`,
     divisionWork: 'Work by division',
     dateLocale: 'en-GB',
 
