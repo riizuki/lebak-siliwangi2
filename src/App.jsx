@@ -130,7 +130,7 @@ function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-6">
         <a href="#beranda" onClick={(e) => handleClick(e, '#beranda')} className="flex items-center gap-2.5 min-w-0">
-          <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-9 h-9 rounded-full bg-white object-contain shrink-0" />
+          <img src="/images/logo-kkn-96.webp" alt="Logo KKN Lebak Siliwangi 2" width="36" height="36" className="w-9 h-9 rounded-full bg-white object-contain shrink-0" />
           <span className="leading-tight min-w-0">
             <span className="block font-heading font-semibold text-[15px] tracking-tight truncate">KKN Lebak Siliwangi 2</span>
             <span className={`block text-[11px] ${solid ? 'text-muted' : 'text-white/70'}`}>UNIKOM 2026</span>
@@ -262,7 +262,7 @@ function MarqueeRow({ items, reverse, duration }) {
             className="group relative shrink-0 pr-3 sm:pr-4"
           >
             <div className="relative w-48 h-36 sm:w-64 sm:h-48 lg:w-[300px] lg:h-56 overflow-hidden rounded-2xl bg-paper-2">
-              <img src={item.src} alt={item.title} className="w-full h-full object-cover object-[center_35%] transition-[filter] duration-500 group-hover:brightness-[0.8]" loading="lazy" />
+              <img src={item.thumb} alt="" className="w-full h-full object-cover object-[center_35%] transition-[filter] duration-500 group-hover:brightness-[0.8]" loading="lazy" decoding="async" />
               <span className="absolute inset-x-0 bottom-0 p-3 pt-10 bg-gradient-to-t from-night/80 to-transparent text-white text-xs leading-snug opacity-0 translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
                 {item.title}
               </span>
@@ -306,7 +306,17 @@ function Person({ m, role, tag, caption = true, cursorType = 'person', cursorSub
     <figure data-cursor={m.nickname || m.name.split(' ')[0]} data-cursor-type={cursorType} data-cursor-sub={cursorSub} className="team-person group">
       <div className="@container relative aspect-[4/5] overflow-hidden rounded-xl bg-paper-2">
         {m.avatar ? (
-          <img src={m.avatar} alt={m.name} className="w-full h-full object-cover object-[center_35%]" loading="lazy" />
+          <img
+            src={m.avatar}
+            srcSet={`${m.avatar.replace(/\/tim\/(.+)\.jpg$/, '/tim/360/$1.webp')} 360w, ${m.avatar.replace(/\/tim\/(.+)\.jpg$/, '/tim/600/$1.webp')} 600w`}
+            sizes="(min-width: 1024px) 346px, (min-width: 640px) 30vw, 45vw"
+            width="360"
+            height="450"
+            alt={m.name}
+            className="w-full h-full object-cover object-[center_35%]"
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center font-heading text-4xl text-muted/60">
             {m.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
@@ -410,7 +420,7 @@ function AboutSection() {
 
 const STATUS = {
   selesai: { key: 'statusDone', cls: 'bg-moss text-white' },
-  berjalan: { key: 'statusOngoing', cls: 'bg-clay/15 text-moss' },
+  berjalan: { key: 'statusOngoing', cls: 'bg-clay/15 text-moss dark:text-clay' },
   rencana: { key: 'statusPlanned', cls: 'bg-paper-2 text-muted border border-line' },
 };
 
@@ -603,7 +613,7 @@ function ProgramSection() {
                           aria-label={g.title}
                           className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-paper-2"
                         >
-                          <img src={g.src} alt={g.title} loading="lazy" className="w-full h-full object-cover transition-[filter] duration-500 group-hover:brightness-90" />
+                          <img src={g.thumb} alt={g.title} loading="lazy" decoding="async" className="w-full h-full object-cover transition-[filter] duration-500 group-hover:brightness-90" />
                         </button>
                       ))}
                     </div>
@@ -783,7 +793,7 @@ function Lightbox({ items, index, onClose, onNav }) {
       className="lightbox fixed inset-0 z-[100] bg-night flex flex-col overflow-clip"
     >
       {/* Latar: foto yang sama, diperbesar dan diburamkan supaya warnanya menyatu */}
-      <img key={`bg-${item.src}`} src={item.src} alt="" aria-hidden="true" className="lightbox-bg absolute inset-0 w-full h-full object-cover scale-125 blur-3xl saturate-150 opacity-55 pointer-events-none" />
+      <img key={`bg-${item.src}`} src={item.thumb || item.src} alt="" aria-hidden="true" className="lightbox-bg absolute inset-0 w-full h-full object-cover scale-125 blur-3xl saturate-150 opacity-55 pointer-events-none" />
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-night/80 via-night/45 to-night/95 pointer-events-none" />
 
       {/* Bilah atas: nomor, progres, kategori, tutup */}
@@ -847,7 +857,7 @@ function Lightbox({ items, index, onClose, onNav }) {
                     i === index ? 'ring-2 ring-white opacity-100 -translate-y-0.5' : 'opacity-35 hover:opacity-80'
                   }`}
                 >
-                  <img src={it.src} alt="" loading="lazy" className="w-full h-full object-cover" />
+                  <img src={it.thumb || it.src} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -912,6 +922,7 @@ function GalleryGrid({ limit, picks, layout = 'classic' }) {
                 <img
                   src={item.src}
                   alt={item.title}
+                  decoding="async"
                   onLoad={(e) => {
                     const r = e.currentTarget.naturalWidth / e.currentTarget.naturalHeight;
                     setRatios((prev) => (prev[item.src] === r ? prev : { ...prev, [item.src]: r }));
@@ -939,7 +950,7 @@ function GalleryGrid({ limit, picks, layout = 'classic' }) {
             return (
               <figure key={item.src} data-cursor={t.cursorView} data-cursor-type="album" data-cursor-img={item.src} data-cursor-count={`${String(idx + 1).padStart(2, '0')} / ${String(filtered.length).padStart(2, '0')}`} onClick={() => setOpenIdx(idx)} className={featured ? 'col-span-2 row-span-2' : ''}>
                 <div className={`overflow-hidden rounded-sm bg-paper-2 ${featured ? 'aspect-[4/3] lg:aspect-auto lg:h-[calc(100%-3.5rem)]' : 'aspect-[4/3]'}`}>
-                  <img src={item.src} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={item.src} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 </div>
                 <figcaption className="mt-2 text-sm">
                   <span className="text-ink">{item.title}</span>
@@ -999,7 +1010,7 @@ function GalleryPage() {
       <header className="sticky top-0 z-50 bg-paper/85 backdrop-blur-xl border-b border-line">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-6">
           <a href="/" className="flex items-center gap-2.5 min-w-0">
-            <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-9 h-9 rounded-full bg-white object-contain shrink-0" />
+            <img src="/images/logo-kkn-96.webp" alt="Logo KKN Lebak Siliwangi 2" width="36" height="36" className="w-9 h-9 rounded-full bg-white object-contain shrink-0" />
             <span className="leading-tight min-w-0 hidden min-[420px]:block">
               <span className="block font-heading font-semibold text-[15px] tracking-tight truncate">KKN Lebak Siliwangi 2</span>
               <span className="block text-[11px] text-muted">UNIKOM 2026</span>
@@ -1198,11 +1209,14 @@ function PartnersSection() {
               />
               <div data-logo-box className={`h-24 w-full flex items-center justify-center [perspective:600px] ${logo.darkText ? 'dark:brightness-[1.6] dark:contrast-[0.9]' : ''}`}>
                 <img
-                  src={logo.src}
+                  src={logo.src.replace(/\/logo\/(.+)\.png$/, '/logo/96/$1.webp')}
+                  srcSet={`${logo.src.replace(/\/logo\/(.+)\.png$/, '/logo/96/$1.webp')} 1x, ${logo.src.replace(/\/logo\/(.+)\.png$/, '/logo/192/$1.webp')} 2x`}
+                  width={logo.w}
+                  height={logo.h}
                   alt={`Logo ${logo.name}`}
                   loading="lazy"
                   style={{ transform: 'rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--s, 1))' }}
-                  className={`object-contain max-w-full [--s:1] group-hover:[--s:1.14] transition-[transform,filter] duration-300 ease-out group-hover:[filter:drop-shadow(0_14px_22px_color-mix(in_srgb,var(--logo)_45%,transparent))] ${
+                  className={`object-contain w-auto max-w-full [--s:1] group-hover:[--s:1.14] transition-[transform,filter] duration-300 ease-out group-hover:[filter:drop-shadow(0_14px_22px_color-mix(in_srgb,var(--logo)_45%,transparent))] ${
                     logo.wide ? 'h-14 md:h-16' : 'h-20 md:h-24'
                   }`}
                 />
@@ -1233,7 +1247,7 @@ function Footer() {
   const contacts = [
     [faLocationDot, FOOTER_INFO.address],
   ];
-  const heading = 'text-xs font-medium uppercase tracking-[0.14em] text-white/45 mb-5';
+  const heading = 'text-xs font-medium uppercase tracking-[0.14em] text-white/60 mb-5';
 
   return (
     <footer id="kontak" className="bg-moss-dark text-white">
@@ -1242,7 +1256,7 @@ function Footer() {
         <div className="py-14 md:py-16 grid grid-cols-2 md:grid-cols-12 gap-x-5 gap-y-10 sm:gap-10 md:gap-8">
           <div className="col-span-2 md:col-span-4">
             <div className="flex items-center gap-3">
-              <img src="/images/logo-kkn.jpg" alt="Logo KKN Lebak Siliwangi 2" className="w-12 h-12 rounded-full bg-white object-contain" />
+              <img src="/images/logo-kkn-96.webp" alt="Logo KKN Lebak Siliwangi 2" width="48" height="48" loading="lazy" className="w-12 h-12 rounded-full bg-white object-contain" />
               <div className="leading-tight">
                 <p className="font-heading text-lg">KKN Lebak Siliwangi 2</p>
                 <p className="text-xs text-white/55 mt-0.5">Universitas Komputer Indonesia</p>
@@ -1311,9 +1325,9 @@ function Footer() {
         </div>
 
         {/* Baris bawah */}
-        <div className="py-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-white/45">
+        <div className="py-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-white/60">
           <div className="flex items-center gap-2.5">
-            <img src="/images/logo/unikom.png" alt="Logo UNIKOM" className="w-6 h-6 object-contain" />
+            <img src="/images/logo/96/unikom.webp" alt="Logo UNIKOM" width="24" height="24" loading="lazy" className="w-6 h-6 object-contain" />
             <p>{FOOTER_INFO.copyright}</p>
           </div>
           <a

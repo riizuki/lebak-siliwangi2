@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-heading: 'Bricolage Grotesque', system-ui, sans-serif;
-  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-heading: 'Bricolage Grotesque Variable', system-ui, sans-serif;
+  --font-sans: 'Geist Variable', system-ui, sans-serif;
 
   --color-paper: #ffffff;
   --color-paper-2: #f3f6f4;
@@ -134,7 +134,7 @@ h1, h2, h3, h4 {
 }
 
 @keyframes cursor-rec {
-  to { visibility: hidden; }
+  to { opacity: 0; }
 }
 
 /* Cursor lencana emas DPL: cincin emas berkilau yang berputar + cahaya lembut */

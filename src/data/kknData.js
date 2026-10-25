@@ -129,11 +129,11 @@ export const TEAM_MEMBERS = [
 
 // Logo instansi mitra kerja sama, diurutkan dari tingkat paling bawah ke paling tinggi
 export const PARTNER_LOGOS = [
-  { name: 'Kelurahan Lebak Siliwangi', level: 'Kelurahan', src: '/images/logo/kelurahan-lebak-siliwangi.png', color: '#2e9e5b' },
-  { name: 'Kecamatan Coblong', level: 'Kecamatan', src: '/images/logo/kecamatan-coblong.png', wide: true, darkText: true, color: '#d9a400' },
-  { name: 'Universitas Komputer Indonesia', level: 'Perguruan Tinggi', src: '/images/logo/unikom.png', color: '#0b8bd0' },
-  { name: 'Pemerintah Provinsi Jawa Barat', level: 'Provinsi', src: '/images/logo/jawa-barat.png', color: '#0f9d58' },
-  { name: 'LLDIKTI Wilayah IV', level: 'Wilayah', src: '/images/logo/lldikti-wilayah-4.png', wide: true, color: '#2b56a8' },
+  { name: 'Kelurahan Lebak Siliwangi', level: 'Kelurahan', src: '/images/logo/kelurahan-lebak-siliwangi.png', w: 96, h: 96, color: '#2e9e5b' },
+  { name: 'Kecamatan Coblong', level: 'Kecamatan', src: '/images/logo/kecamatan-coblong.png', w: 300, h: 96, wide: true, darkText: true, color: '#d9a400' },
+  { name: 'Universitas Komputer Indonesia', level: 'Perguruan Tinggi', src: '/images/logo/unikom.png', w: 96, h: 96, color: '#0b8bd0' },
+  { name: 'Pemerintah Provinsi Jawa Barat', level: 'Provinsi', src: '/images/logo/jawa-barat.png', w: 91, h: 96, color: '#0f9d58' },
+  { name: 'LLDIKTI Wilayah IV', level: 'Wilayah', src: '/images/logo/lldikti-wilayah-4.png', w: 540, h: 96, wide: true, color: '#2b56a8' },
 ];
 
 export const PROGRAMS = [
@@ -207,6 +207,8 @@ export const GALLERY_FILTERS = [
 ];
 
 const img = (name) => `/images/kegiatan/${name}.jpg`;
+// Versi kecil (640 px) untuk grid, marquee, dan kartu; foto penuh hanya dipakai di lightbox
+const thumbOf = (src) => src.replace('/kegiatan/', '/kegiatan/thumb/');
 
 // Foto pilihan yang tampil di bagian Galeri halaman utama (urutan = urutan tampil, foto pertama tampil besar)
 export const HOME_GALLERY = [
@@ -297,7 +299,7 @@ export const GALLERY_ITEMS = [
   { src: img('berbincang-warga-sampah'), category: 'warga', title: 'Berbincang dengan warga soal pengelolaan sampah', location: 'Lebak Siliwangi' },
   { src: img('pemilahan-pagi-rw05'), category: 'pemilahan', title: 'Memilah sampah bersama Tim Gaslah di depan bank sampah', location: 'RW 05 · Sep 2026' },
   { src: img('istirahat-hanggar'), category: 'maggot', title: 'Rehat sejenak di sela mengolah sampah organik', location: 'Lebak Siliwangi · Okt 2026' },
-];
+].map((item) => ({ ...item, thumb: thumbOf(item.src) }));
 
 export const DIVISION_OUTCOMES = [
   {
