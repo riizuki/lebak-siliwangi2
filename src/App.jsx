@@ -21,7 +21,7 @@ function SectionHeader({ no, label, title, subtitle }) {
   return (
     <div className="grid md:grid-cols-12 gap-3 md:gap-6 border-t border-ink/20 pt-5 mb-10 md:mb-14">
       <p className="md:col-span-3 text-sm text-muted">
-        <span className="text-clay">{no}</span> &nbsp;{label}
+        <span className="text-clay-ink">{no}</span> &nbsp;{label}
       </p>
       <div className="md:col-span-9">
         <h2 className="text-[1.625rem] sm:text-4xl lg:text-[2.75rem] leading-[1.15] sm:leading-[1.1] text-ink">{title}</h2>
@@ -341,7 +341,7 @@ function Person({ m, role, tag, caption = true, cursorType = 'person', cursorSub
         </span>
       </div>
       {caption && <figcaption className="mt-3">
-        {role && <p className="text-[11px] sm:text-xs text-clay mb-0.5">{role}</p>}
+        {role && <p className="text-[11px] sm:text-xs text-clay-ink mb-0.5">{role}</p>}
         <p className="font-heading text-[13.5px] sm:text-base leading-snug">
           <span className="bg-[linear-gradient(currentColor,currentColor)] bg-no-repeat bg-[length:0%_1px] bg-[position:0_100%] transition-[background-size] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-[length:100%_1px]">
             {m.name}
@@ -387,7 +387,7 @@ function AboutSection() {
         <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6 sm:gap-6">
           <Person m={dpl} tag="DPL" caption={false} cursorType="mentor" cursorSub={DPL.role} />
           <div className="sm:col-span-2 flex flex-col justify-center sm:pl-6 lg:pl-10">
-            <p className="text-[9px] sm:text-xs font-medium uppercase tracking-[0.14em] sm:tracking-[0.16em] text-clay">{DPL.role}</p>
+            <p className="text-[9px] sm:text-xs font-medium uppercase tracking-[0.14em] sm:tracking-[0.16em] text-clay-ink">{DPL.role}</p>
             <p className="mt-1.5 sm:mt-2 font-heading text-[15px] sm:text-3xl leading-snug">{DPL.name}</p>
             <p className="mt-1 text-[11px] sm:text-sm text-muted">{DPL.affiliation}</p>
             <p className="hidden sm:block mt-5 max-w-lg text-muted leading-relaxed">{DPL.desc}</p>
@@ -596,7 +596,7 @@ function ProgramSection() {
             const st = STATUS[prog.status];
             return (
               <li key={prog.id} className="grid md:grid-cols-12 gap-3 md:gap-6 py-8 md:py-10">
-                <span className="md:col-span-1 font-heading text-2xl sm:text-3xl text-clay leading-none">{prog.id}</span>
+                <span className="md:col-span-1 font-heading text-2xl sm:text-3xl text-clay-ink leading-none">{prog.id}</span>
                 <div className="md:col-span-7">
                   <p className="text-xs uppercase tracking-wide text-muted mb-2">{prog.category}</p>
                   <h3 className="text-lg sm:text-2xl leading-snug mb-2 sm:mb-3">{prog.title}</h3>
@@ -696,7 +696,7 @@ function LocationSection() {
           </div>
 
           <div className="lg:col-span-5">
-            <p className="text-sm text-clay mb-2">{loc.category}</p>
+            <p className="text-sm text-clay-ink mb-2">{loc.category}</p>
             <h3 className="text-xl sm:text-3xl leading-snug">{loc.name}</h3>
             <p className="mt-3 text-[15px] sm:text-base text-muted leading-relaxed">{loc.desc}</p>
 
@@ -1236,7 +1236,7 @@ function PartnersSection() {
     <section aria-labelledby="mitra-title" className="py-16 md:py-20 border-t border-line">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
         <div className="lg:col-span-4">
-          <p className="text-xs font-medium uppercase tracking-[0.14em] text-clay mb-3">{t.partnersLabel}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-clay-ink mb-3">{t.partnersLabel}</p>
           <h2 id="mitra-title" className="font-heading text-xl sm:text-2xl md:text-3xl leading-tight">{t.partnersTitle}</h2>
           <p className="mt-3 text-sm text-muted leading-relaxed max-w-sm">{t.partnersDesc}</p>
         </div>
@@ -1280,7 +1280,7 @@ function PartnersSection() {
                 className="relative z-10 mt-4 w-2.5 h-2.5 rounded-full border-2 border-paper bg-clay hidden sm:block transition-transform duration-500 group-hover:scale-150 group-hover:bg-[var(--logo)] group-hover:opacity-100!"
                 style={{ opacity: 0.45 + i * 0.14 }}
               />
-              <span className="mt-3 text-[10px] font-medium uppercase tracking-[0.16em] text-clay whitespace-nowrap transition-colors duration-300 group-hover:text-[var(--logo)]">{logo.level}</span>
+              <span className="mt-3 text-[10px] font-medium uppercase tracking-[0.16em] text-clay-ink whitespace-nowrap transition-colors duration-300 group-hover:text-[var(--logo)]">{logo.level}</span>
               <span className="mt-1 text-[11px] sm:text-xs text-muted leading-snug max-w-[10rem] transition-colors duration-300 group-hover:text-ink">{logo.name}</span>
             </li>
           ))}

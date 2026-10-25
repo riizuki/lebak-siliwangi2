@@ -12,6 +12,8 @@
   --color-moss: #1a5c44;
   --color-moss-dark: #0f2f24;
   --color-clay: #1f9d6b;
+  /* Versi teks dari clay: cukup gelap untuk kontras AA di atas latar terang */
+  --color-clay-ink: #157f55;
   /* Selalu gelap di kedua mode: hero, lightbox, gradasi teks di atas foto */
   --color-night: #101814;
 }
@@ -27,6 +29,7 @@
   --color-line: #26312c;
   --color-moss: #2a8462;
   --color-clay: #3cbf8a;
+  --color-clay-ink: #3cbf8a;
   color-scheme: dark;
 }
 
