@@ -195,6 +195,16 @@ export const PROGRAMS = [
   },
 ];
 
+// Momen penting di luar program kerja, tampil sebagai penanda di linimasa
+export const MILESTONES = [
+  {
+    id: 'pelepasan',
+    title: 'Pelepasan Mahasiswa KKN Berdampak UNIKOM 2026',
+    desc: 'Dilepas resmi oleh Rektor UNIKOM di Lapangan Kampus Dago bersama 560 mahasiswa, dengan tema “Sampah Terdata, Lingkungan Tertata”.',
+    date: '2026-08-12',
+  },
+];
+
 export const GALLERY_FILTERS = [
   { key: 'semua', label: 'Semua' },
   { key: 'maggot', label: 'Maggot & Organik' },

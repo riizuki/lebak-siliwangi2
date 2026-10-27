@@ -91,6 +91,15 @@ const PROGRAM_TEXT = {
 
 export const PROGRAMS = ID.PROGRAMS.map((p) => ({ ...p, ...PROGRAM_TEXT[p.id] }));
 
+const MILESTONE_TEXT = {
+  pelepasan: {
+    title: 'Send-off of UNIKOM KKN Berdampak 2026 Students',
+    desc: 'Officially sent off by the UNIKOM Rector at the Dago Campus field together with 560 students, under the theme “Sampah Terdata, Lingkungan Tertata” (Recorded Waste, Orderly Environment).',
+  },
+};
+
+export const MILESTONES = ID.MILESTONES.map((m) => ({ ...m, ...MILESTONE_TEXT[m.id] }));
+
 const FILTER_LABELS = {
   semua: 'All',
   maggot: 'Maggot & Organic',

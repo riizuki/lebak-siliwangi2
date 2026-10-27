@@ -1052,25 +1052,31 @@ function GalleryPage() {
 /* ── Ringkasan ── */
 
 const DAY = 86400000;
-const TIMELINE_START = new Date('2026-09-01');
+const TIMELINE_START = new Date('2026-08-01');
 const TIMELINE_END = new Date('2026-11-01'); // batas akhir eksklusif: 31 Okt ikut penuh
 const toPct = (d) => ((new Date(d) - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
 const endPct = (d) => toPct(new Date(d).getTime() + DAY);
 const daysOf = (p) => Math.round((new Date(p.end) - new Date(p.start)) / DAY) + 1;
-const OCT_PCT = toPct('2026-10-01');
-const WEEK_TICKS = ['2026-09-08', '2026-09-15', '2026-09-22', '2026-09-29', '2026-10-06', '2026-10-13', '2026-10-20', '2026-10-27'];
+// Awal tiap bulan (persen) beserta batas kanannya
+const MONTHS = ['2026-08-01', '2026-09-01', '2026-10-01', '2026-11-01'].map(toPct);
+const WEEK_TICKS = Array.from({ length: 13 }, (_, i) => new Date(Date.parse('2026-08-04') + i * 7 * DAY))
+  .filter((d) => d.getUTCDate() !== 1);
 const fmtDay = (d, locale) => new Date(d).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 
-/* Latar & garis bantu di belakang batang: Oktober diberi warna lain, garis per minggu, garis hari ini */
+/* Latar & garis bantu di belakang batang: bulan berselang-seling warnanya, garis per minggu, garis hari ini */
 function TimelineGrid({ todayPct }) {
   return (
     <span aria-hidden="true" className="absolute inset-0 pointer-events-none">
-      <span className="absolute inset-y-0 right-0 bg-paper-2/60" style={{ left: `${OCT_PCT}%` }} />
+      {MONTHS.slice(0, -1).map((pct, i) =>
+        i % 2 === 0 && <span key={pct} className="absolute inset-y-0 bg-paper-2/60" style={{ left: `${pct}%`, right: `${100 - MONTHS[i + 1]}%` }} />
+      )}
       <span className="hidden sm:block absolute inset-y-0 left-0 w-px bg-line" />
       {WEEK_TICKS.map((d) => (
-        <span key={d} className="hidden sm:block absolute inset-y-0 w-px bg-line/50" style={{ left: `${toPct(d)}%` }} />
+        <span key={d.getTime()} className="hidden sm:block absolute inset-y-0 w-px bg-line/50" style={{ left: `${toPct(d)}%` }} />
       ))}
-      <span className="absolute inset-y-0 w-px bg-line" style={{ left: `${OCT_PCT}%` }} />
+      {MONTHS.slice(1, -1).map((pct) => (
+        <span key={pct} className="absolute inset-y-0 w-px bg-line" style={{ left: `${pct}%` }} />
+      ))}
       {todayPct !== null && <span className="absolute inset-y-0 w-px bg-ink/70" style={{ left: `${todayPct}%` }} />}
     </span>
   );
@@ -1079,7 +1085,7 @@ function TimelineGrid({ todayPct }) {
 const label = 'text-[10.5px] uppercase tracking-[0.16em]';
 
 function ProgramTimeline() {
-  const { PROGRAMS, t } = usePrefs();
+  const { PROGRAMS, MILESTONES, t } = usePrefs();
   // Tanggal hari ini baru diisi di browser (HTML prerender dibuat saat build)
   const [now, setNow] = useState(null);
   useEffect(() => setNow(new Date()), []);
@@ -1098,12 +1104,11 @@ function ProgramTimeline() {
         <span className="hidden sm:block" />
         <div className={`relative h-10 ${label} text-muted`}>
           <TimelineGrid todayPct={todayPct} />
-          <span className="absolute left-2 top-1/2 -translate-y-1/2">
-            <span className="sm:hidden">{t.sepShort}</span><span className="hidden sm:inline">{t.september}</span>
-          </span>
-          <span className="absolute top-1/2 -translate-y-1/2 pl-2" style={{ left: `${OCT_PCT}%` }}>
-            <span className="sm:hidden">{t.octShort}</span><span className="hidden sm:inline">{t.october}</span>
-          </span>
+          {t.months.map(([full, short], i) => (
+            <span key={full} className="absolute top-1/2 -translate-y-1/2 pl-2" style={{ left: `${MONTHS[i]}%` }}>
+              <span className="sm:hidden">{short}</span><span className="hidden sm:inline">{full}</span>
+            </span>
+          ))}
           {todayPct !== null && (
             // Di paruh akhir label diletakkan di kiri garis supaya tidak terpotong tepi
             <span
@@ -1111,13 +1116,30 @@ function ProgramTimeline() {
               style={todayPct > 50 ? { right: `${100 - todayPct}%` } : { left: `${todayPct}%` }}
             >
               <span className="text-ink tabular-nums">{fmtDay(now, t.dateLocale)}</span>
-              <span className="hidden sm:inline text-muted"> — {t.today}</span>
             </span>
           )}
         </div>
       </div>
 
       <ul>
+        {MILESTONES.map((m) => (
+          <li key={m.id} className="grid sm:grid-cols-[38%_1fr] border-t border-line">
+            <div className="pt-4 pb-2 sm:py-5 sm:pr-6">
+              <p className="text-sm sm:text-[15px] font-medium leading-snug">{m.title}</p>
+              <div className="mt-2 flex items-baseline justify-between gap-3 text-xs text-muted">
+                <span className="tabular-nums">{fmtDay(m.date, t.dateLocale)}</span>
+                <span className={`${label} shrink-0`}>{t.milestone}</span>
+              </div>
+            </div>
+            <div className="relative h-9 sm:h-auto mb-3 sm:mb-0">
+              <TimelineGrid todayPct={todayPct} />
+              <span
+                className="absolute top-1/2 w-2.5 h-2.5 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-[1px] bg-moss"
+                style={{ left: `${(toPct(m.date) + endPct(m.date)) / 2}%` }}
+              />
+            </div>
+          </li>
+        ))}
         {PROGRAMS.map((p) => {
           const left = toPct(p.start);
           const right = endPct(p.end);
@@ -1160,6 +1182,7 @@ function ProgramTimeline() {
 
       {/* Keterangan */}
       <div className="flex flex-wrap gap-x-6 gap-y-2 pt-4 border-t border-line text-xs text-muted">
+        <span className="flex items-center gap-2"><span className="w-2 h-2 mx-1.5 rotate-45 rounded-[1px] bg-moss" />{t.milestone}</span>
         <span className="flex items-center gap-2"><span className="w-5 h-1.5 rounded-[1px] bg-moss" />{t.statusDone}</span>
         {ongoing && <span className="flex items-center gap-2"><span className="w-5 h-1.5 rounded-[1px] bg-clay" />{t.statusOngoing}</span>}
         {ongoing && <span className="flex items-center gap-2"><span className="w-5 border-t border-dashed border-clay" />{t.remaining}</span>}
@@ -1177,7 +1200,7 @@ function SummarySection() {
     [PROGRAMS.length, t.statPrograms, t.statProgramsNote(done)],
     ['2', t.statRw, 'RW 05 & RW 07'],
     [TEAM_MEMBERS.length, t.statStudents, t.statStudentsNote(majors)],
-    ['2', t.statMonths, t.statMonthsNote],
+    ['3', t.statMonths, t.statMonthsNote],
   ];
 
   return (
