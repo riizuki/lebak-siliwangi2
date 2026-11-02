@@ -224,7 +224,7 @@ const thumbOf = (src) => src.replace('/kegiatan/', '/kegiatan/thumb/');
 // Video akhir KKN di YouTube (status "Tidak publik", penyematan diizinkan).
 // Isi `youtubeId` dengan ID dari link: youtu.be/<ID>. Kosong = video tidak ditampilkan.
 export const FEATURE_VIDEO = {
-  youtubeId: 'yRK6XApUouM',
+  youtubeId: 'YDa3CfoVxVw',
   duration: '11 menit',
 };
 
