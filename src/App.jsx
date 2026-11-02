@@ -1077,6 +1077,7 @@ function GalleryPage() {
       <footer className="border-t border-line py-6 text-xs text-muted">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">{FOOTER_INFO.copyright}</div>
       </footer>
+      <BackToTop />
     </div>
   );
 }
@@ -1446,17 +1447,80 @@ function Footer() {
             <img src="/images/logo/96/unikom.webp" alt="Logo UNIKOM" width="24" height="24" loading="lazy" className="w-6 h-6 object-contain" />
             <p>{FOOTER_INFO.copyright}</p>
           </div>
-          <a
-            href="#beranda"
-            onClick={(e) => scrollTo(e, '#beranda')}
-            className="inline-flex items-center gap-2 hover:text-white transition-colors"
-          >
-            {t.backToTop}
-            <FontAwesomeIcon icon={faArrowUp} className="text-[10px]" />
-          </a>
         </div>
       </div>
     </footer>
+  );
+}
+
+/*
+  Tombol kembali ke atas yang melayang di pojok kanan bawah.
+  Supaya tidak menghalangi konten, tombol hanya muncul setelah melewati hero DAN saat pengguna
+  scroll ke atas (atau sudah di dasar halaman). Cincin tipisnya terisi sesuai posisi scroll.
+*/
+const RING = 2 * Math.PI * 21;
+
+function BackToTop() {
+  const { t } = usePrefs();
+  const [show, setShow] = useState(false);
+  const ringRef = useRef(null);
+
+  useEffect(() => {
+    let raf = 0;
+    let lastY = window.scrollY;
+    let goingUp = false;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(y / max, 1) : 0;
+      if (Math.abs(y - lastY) > 6) {
+        goingUp = y < lastY;
+        lastY = y;
+      }
+      setShow(y > window.innerHeight * 0.9 && (goingUp || y >= max - 40));
+      ringRef.current?.setAttribute('stroke-dashoffset', String(RING * (1 - progress)));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  return (
+    <button
+      type="button"
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label={t.backToTop}
+      tabIndex={show ? 0 : -1}
+      className={`group fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-paper/75 backdrop-blur-md text-ink shadow-[0_8px_24px_-10px_rgba(16,24,20,0.35)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'
+      }`}
+    >
+      <svg viewBox="0 0 48 48" className="absolute inset-0 w-full h-full -rotate-90" aria-hidden="true">
+        <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" strokeWidth="1" className="text-line" />
+        <circle
+          ref={ringRef}
+          cx="24"
+          cy="24"
+          r="21"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeDasharray={RING}
+          strokeDashoffset={RING}
+          className="text-clay-ink"
+        />
+      </svg>
+      <FontAwesomeIcon icon={faArrowUp} className="relative text-[13px] transition-transform duration-300 group-hover:-translate-y-0.5" />
+    </button>
   );
 }
 
@@ -1493,6 +1557,7 @@ export default function App({ gallery = isGalleryRoute() }) {
       </main>
       <PartnersSection />
       <Footer />
+      <BackToTop />
     </div>
   );
 }

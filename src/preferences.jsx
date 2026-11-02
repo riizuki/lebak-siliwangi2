@@ -45,7 +45,7 @@ export function PreferencesProvider({ children }) {
   useEffect(() => {
     if (!ready.current) return;
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0e1411' : '#ffffff');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#121211' : '#ffffff');
     write('theme', theme);
   }, [theme]);
 
