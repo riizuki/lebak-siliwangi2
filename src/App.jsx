@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, MotionConfig } from 'framer-motion';
 import {
   FontAwesomeIcon, faBars, faXmark, faArrowRight, faArrowUp, faArrowUpRightFromSquare,
   faLocationDot, faGlobe, faSun, faMoon, faInstagram, faYoutube,
@@ -13,11 +14,22 @@ const scrollTo = (e, href) => {
   document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
 };
 
+/* ── Animasi (framer-motion) ──
+   Elemen muncul sekali dengan naik pelan + memudar saat masuk layar.
+   `delay` dipakai untuk efek berurutan di dalam satu grid. */
+const EASE = [0.16, 1, 0.3, 1];
+const reveal = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '0px 0px -60px 0px' },
+  transition: { duration: 0.8, ease: EASE, delay },
+});
+
 /* ── Header section: nomor + label di kiri, judul di kanan ── */
 
 function SectionHeader({ no, label, title, subtitle }) {
   return (
-    <div className="grid md:grid-cols-12 gap-3 md:gap-6 border-t border-ink/20 pt-5 mb-10 md:mb-14">
+    <motion.div {...reveal()} className="grid md:grid-cols-12 gap-3 md:gap-6 border-t border-ink/20 pt-5 mb-10 md:mb-14">
       <p className="md:col-span-3 text-sm text-muted">
         <span className="text-clay-ink">{no}</span> &nbsp;{label}
       </p>
@@ -25,7 +37,7 @@ function SectionHeader({ no, label, title, subtitle }) {
         <h2 className="text-[1.625rem] sm:text-4xl lg:text-[2.75rem] leading-[1.15] sm:leading-[1.1] text-ink">{title}</h2>
         {subtitle && <p className="mt-3 max-w-xl text-[15px] sm:text-base text-muted leading-relaxed">{subtitle}</p>}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -194,6 +206,11 @@ function Navbar() {
 
 /* ── Hero ── */
 
+const heroItem = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
+};
+
 function HeroSection() {
   const { HERO_CONTENT, TEAM_MEMBERS, t } = usePrefs();
   const facts = [
@@ -213,34 +230,40 @@ function HeroSection() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
 
-      <div className="relative max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 sm:pb-14">
-        <p className="text-xs sm:text-sm text-white/75 mb-3 sm:mb-4">{HERO_CONTENT.badge}</p>
-        <h1 className="text-[1.75rem] sm:text-5xl lg:text-[4.25rem] leading-[1.12] sm:leading-[1.05] max-w-4xl">
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{ show: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } } }}
+        className="relative max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 sm:pb-14"
+      >
+        <motion.p variants={heroItem} className="text-xs sm:text-sm text-white/75 mb-3 sm:mb-4">{HERO_CONTENT.badge}</motion.p>
+        <motion.h1 variants={heroItem} className="text-[1.75rem] sm:text-5xl lg:text-[4.25rem] leading-[1.12] sm:leading-[1.05] max-w-4xl">
           {HERO_CONTENT.title}{' '}
           <span className="text-[#9fe3bf]">{HERO_CONTENT.titleHighlight}</span>
-        </h1>
-        <p className="mt-4 sm:mt-6 max-w-2xl text-[15px] sm:text-lg text-white/85 leading-relaxed">
+        </motion.h1>
+        <motion.p variants={heroItem} className="mt-4 sm:mt-6 max-w-2xl text-[15px] sm:text-lg text-white/85 leading-relaxed">
           {HERO_CONTENT.description}
-        </p>
+        </motion.p>
 
-        <a
+        <motion.a
+          variants={heroItem}
           href="#proker"
           onClick={(e) => scrollTo(e, '#proker')}
           className="mt-8 inline-flex items-center gap-2 border-b border-white/60 pb-1 hover:border-white"
         >
           {HERO_CONTENT.ctaPrimary}
           <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
-        </a>
+        </motion.a>
 
-        <dl className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 border-t border-white/25 pt-5 text-sm">
+        <motion.dl variants={heroItem} className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 border-t border-white/25 pt-5 text-sm">
           {facts.map(([k, v]) => (
             <div key={k}>
               <dt className="text-white/60">{k}</dt>
               <dd className="mt-0.5">{v}</dd>
             </div>
           ))}
-        </dl>
-      </div>
+        </motion.dl>
+      </motion.div>
     </section>
   );
 }
@@ -300,12 +323,12 @@ function ActivityMarquee() {
 
 /* ── Struktur Tim ── */
 
-function Person({ m, role, tag, caption = true, cursorType = 'person', cursorSub }) {
+function Person({ m, role, tag, caption = true, cursorType = 'person', cursorSub, delay = 0 }) {
   const { TEAM_MEMBERS } = usePrefs();
   const no = TEAM_MEMBERS.findIndex((x) => x.name === m.name) + 1;
 
   return (
-    <figure data-cursor={m.nickname || m.name.split(' ')[0]} data-cursor-type={cursorType} data-cursor-sub={cursorSub} className="team-person group">
+    <motion.figure {...reveal(delay)} data-cursor={m.nickname || m.name.split(' ')[0]} data-cursor-type={cursorType} data-cursor-sub={cursorSub} className="team-person group">
       <div className="@container relative aspect-[4/5] overflow-hidden rounded-xl bg-paper-2">
         {m.avatar ? (
           <img
@@ -351,7 +374,7 @@ function Person({ m, role, tag, caption = true, cursorType = 'person', cursorSub
         </p>
         <p className="text-xs sm:text-sm text-muted">{m.jurusan}</p>
       </figcaption>}
-    </figure>
+    </motion.figure>
   );
 }
 
@@ -400,8 +423,8 @@ function AboutSection() {
           <TeamGroupHeading title={t.divLeaders} note={`${t.divLeadersNote} · ${t.people(3)}`} />
           <div className="team-grid grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6 sm:gap-6">
             <Person m={ketua} role={t.roleLeader} />
-            <Person m={sekretaris} role={t.roleSecretary} />
-            <Person m={bendahara} role={t.roleTreasurer} />
+            <Person m={sekretaris} role={t.roleSecretary} delay={0.08} />
+            <Person m={bendahara} role={t.roleTreasurer} delay={0.16} />
           </div>
         </div>
 
@@ -409,7 +432,7 @@ function AboutSection() {
           <div key={d.name} className="mt-20">
             <TeamGroupHeading title={d.name} note={`${d.note} · ${t.people(d.members.length)}`} />
             <div className="team-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-6 sm:gap-6">
-              {d.members.map((m) => <Person key={m.name} m={m} />)}
+              {d.members.map((m, i) => <Person key={m.name} m={m} delay={i * 0.08} />)}
             </div>
           </div>
         ))}
@@ -599,7 +622,7 @@ function ProgramSection() {
           {PROGRAMS.map((prog) => {
             const st = STATUS[prog.status];
             return (
-              <li key={prog.id} className="grid md:grid-cols-12 gap-3 md:gap-6 py-8 md:py-10">
+              <motion.li key={prog.id} {...reveal()} className="grid md:grid-cols-12 gap-3 md:gap-6 py-8 md:py-10">
                 <span className="md:col-span-1 font-heading text-2xl sm:text-3xl text-clay-ink leading-none">{prog.id}</span>
                 <div className="md:col-span-7">
                   <p className="text-xs uppercase tracking-wide text-muted mb-2">{prog.category}</p>
@@ -636,7 +659,7 @@ function ProgramSection() {
                     </dd>
                   </div>
                 </dl>
-              </li>
+              </motion.li>
             );
           })}
         </ol>
@@ -987,7 +1010,7 @@ function FeatureVideo() {
           </div>
           <span className="text-sm text-muted">{FEATURE_VIDEO.duration}</span>
         </div>
-        <div className="aspect-video overflow-hidden rounded-xl bg-night ring-1 ring-line shadow-[0_30px_70px_-35px_rgba(16,24,20,0.45)]">
+        <motion.div {...reveal(0.1)} className="aspect-video overflow-hidden rounded-xl bg-night ring-1 ring-line shadow-[0_30px_70px_-35px_rgba(16,24,20,0.45)]">
           <iframe
             src={`https://www.youtube-nocookie.com/embed/${FEATURE_VIDEO.youtubeId}?rel=0&playsinline=1`}
             title={t.videoTitle}
@@ -997,7 +1020,7 @@ function FeatureVideo() {
             loading="lazy"
             className="w-full h-full border-0"
           />
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1247,12 +1270,12 @@ function SummarySection() {
         />
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line rounded-2xl overflow-hidden">
-          {stats.map(([value, label, note]) => (
-            <div key={label} className="bg-paper p-5 sm:p-7">
+          {stats.map(([value, label, note], i) => (
+            <motion.div key={label} {...reveal(i * 0.08)} className="bg-paper p-5 sm:p-7">
               <p className="font-heading text-3xl sm:text-5xl text-moss leading-none">{value}</p>
               <p className="mt-3 font-medium">{label}</p>
               <p className="text-sm text-muted mt-0.5">{note}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -1539,25 +1562,31 @@ export default function App({ gallery = isGalleryRoute() }) {
     if (!gallery) document.title = t.metaTitle;
   }, [t, gallery]);
 
-  if (gallery) return <GalleryPage />;
+  if (gallery) return (
+    <MotionConfig reducedMotion="user">
+      <GalleryPage />
+    </MotionConfig>
+  );
 
   return (
-    <div className="min-h-screen">
-      <CustomCursor />
-      <Navbar />
-      <main>
-        <HeroSection />
-        <FeatureVideo />
-        <ActivityMarquee />
-        <AboutSection />
-        <ProgramSection />
-        <LocationSection />
-        <GallerySection />
-        <SummarySection />
-      </main>
-      <PartnersSection />
-      <Footer />
-      <BackToTop />
-    </div>
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen">
+        <CustomCursor />
+        <Navbar />
+        <main>
+          <HeroSection />
+          <FeatureVideo />
+          <ActivityMarquee />
+          <AboutSection />
+          <ProgramSection />
+          <LocationSection />
+          <GallerySection />
+          <SummarySection />
+        </main>
+        <PartnersSection />
+        <Footer />
+        <BackToTop />
+      </div>
+    </MotionConfig>
   );
 }

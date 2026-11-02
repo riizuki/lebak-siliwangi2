@@ -160,7 +160,7 @@ export const PROGRAMS = [
     date: '9 Sep – 31 Okt 2026',
     start: '2026-09-09',
     end: '2026-10-31',
-    status: 'berjalan',
+    status: 'selesai',
     // Foto kegiatan terkait (nama file di /images/kegiatan)
     photos: ['pemilahan-bersama-gaslah', 'pemilahan-ember-organik', 'pemilahan-hasil-terkumpul', 'pemilahan-bank-sampah-rw05'],
     model3d: '/models/gaslah.glb',
