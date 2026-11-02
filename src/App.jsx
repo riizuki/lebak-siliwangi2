@@ -971,10 +971,10 @@ function GalleryGrid({ limit, picks, layout = 'classic' }) {
   );
 }
 
-// Video akhir KKN tepat setelah hero, diputar lewat Google Drive
+// Video akhir KKN tepat setelah hero, diputar lewat YouTube (rapi di HP maupun desktop)
 function FeatureVideo() {
   const { FEATURE_VIDEO, t } = usePrefs();
-  if (!FEATURE_VIDEO.driveId) return null;
+  if (!FEATURE_VIDEO.youtubeId) return null;
 
   return (
     <section id="video" aria-label={t.videoLabel} className="py-14 md:py-20">
@@ -987,12 +987,12 @@ function FeatureVideo() {
           </div>
           <span className="text-sm text-muted">{FEATURE_VIDEO.duration}</span>
         </div>
-        {/* Pemutar Drive butuh tinggi minimal ±300px (diberi sedikit cadangan); di bawah itu kontrolnya terpotong (terjadi di HP) */}
-        <div className="w-full aspect-video min-h-[320px] overflow-hidden rounded-xl bg-night ring-1 ring-line shadow-[0_30px_70px_-35px_rgba(16,24,20,0.45)]">
+        <div className="aspect-video overflow-hidden rounded-xl bg-night ring-1 ring-line shadow-[0_30px_70px_-35px_rgba(16,24,20,0.45)]">
           <iframe
-            src={`https://drive.google.com/file/d/${FEATURE_VIDEO.driveId}/preview`}
+            src={`https://www.youtube-nocookie.com/embed/${FEATURE_VIDEO.youtubeId}?rel=0&playsinline=1`}
             title={t.videoTitle}
-            allow="autoplay; fullscreen"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
             loading="lazy"
             className="w-full h-full border-0"

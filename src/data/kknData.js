@@ -221,11 +221,10 @@ const img = (name) => `/images/kegiatan/${name}.jpg`;
 const thumbOf = (src) => src.replace('/kegiatan/', '/kegiatan/thumb/');
 
 // Foto pilihan yang tampil di bagian Galeri halaman utama (urutan = urutan tampil, foto pertama tampil besar)
-// Video dokumentasi akhir KKN di Google Drive.
-// Isi `driveId` dengan ID dari link berbagi: drive.google.com/file/d/<ID>/view
-// (akses berbagi harus "Siapa saja yang memiliki link"). Kosong = video tidak ditampilkan.
+// Video akhir KKN di YouTube (status "Tidak publik", penyematan diizinkan).
+// Isi `youtubeId` dengan ID dari link: youtu.be/<ID>. Kosong = video tidak ditampilkan.
 export const FEATURE_VIDEO = {
-  driveId: '1PFvaPNesleLsP8NHcEV_s0en139sMIT-',
+  youtubeId: 'yRK6XApUouM',
   duration: '11 menit',
 };
 
