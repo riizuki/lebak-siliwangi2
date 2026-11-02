@@ -2,23 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 
 const DARK_AREAS = '#beranda, #kontak, .bg-moss, .bg-moss-dark, .bg-night, [data-dark]';
 
-// Tombol/link yang lebih besar dari ini tidak dibungkus, cukup titik kecil
 const MAX_WRAP = { w: 320, h: 120 };
 
-/*
-  Jenis efek hover:
-  - person   : lingkaran besar berisi nama + teks melingkar berputar (kartu anggota tim)
-  - view     : lingkaran kaca buram + ikon perbesar + label (halaman galeri, gambar lain, peta)
-  - orbit    : lingkaran gelap berisi ikon orbit 3D yang berputar + label (model 3D, bisa diputar dengan drag)
-  - slide    : kapsul berisi label + panah yang terus bergeser (foto berjalan di Dokumentasi)
-  - frame    : bingkai jendela bidik kamera + titik REC berkedip (foto program kerja)
-  - shutter  : lingkaran putih berisi bukaan lensa kamera yang terbuka saat masuk foto dan "menjepret" saat diklik (halaman galeri)
-  - album    : tumpukan kartu polaroid berisi foto yang disorot + nomor urut (galeri beranda)
-  - external : bulatan dengan panah ↗ (link yang membuka tab baru)
-  - action   : cursor "menempel" dan membungkus bentuk tombol/link (efek magnet)
-  - mentor   : lencana emas eksklusif untuk DPL: cincin emas berkilau, peran melingkar, ikon toga + nama
-  - logo     : cincin warna berputar + nama instansi melingkar, tertarik ke tengah logo (logo mitra)
-*/
 export default function CustomCursor() {
   const [hover, setHover] = useState({ type: null, label: '', sub: '', color: '', img: '' });
   const [isVisible, setIsVisible] = useState(false);
@@ -38,7 +23,6 @@ export default function CustomCursor() {
   hoverTypeRef.current = hover.type;
 
   useEffect(() => {
-    // Nonaktifkan pada layar sentuh
     if (window.matchMedia('(pointer: coarse)').matches) return;
 
     let animId;
@@ -57,11 +41,9 @@ export default function CustomCursor() {
       }
 
       const el = document.elementFromPoint(e.clientX, e.clientY);
-      // Mode gelap aktif: seluruh halaman dianggap area gelap
       if (el) setIsDark(document.documentElement.classList.contains('dark') || !!el.closest(DARK_AREAS));
     };
 
-    // Lingkaran pengikut: lerp + efek "stretch" sesuai arah dan kecepatan gerak
     const animate = () => {
       const ring = ringRef.current;
       const wrapEl = hoverTypeRef.current === 'action' ? hoverElRef.current : null;
@@ -69,7 +51,6 @@ export default function CustomCursor() {
       let target = mouse.current;
 
       if (logoEl) {
-        // Logo mitra: tertarik kuat ke tengah logo, tapi masih ikut sedikit gerakan mouse
         const r = logoEl.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const cy = r.top + r.height / 2;
@@ -77,7 +58,6 @@ export default function CustomCursor() {
       }
 
       if (wrapEl && ring) {
-        // Efek magnet: menempel ke tengah tombol, sedikit tertarik ke arah mouse
         const r = wrapEl.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const cy = r.top + r.height / 2;
@@ -130,6 +110,15 @@ export default function CustomCursor() {
     const onMouseOver = (e) => {
       const t = e.target;
 
+      // Di atas iframe (video Drive, peta) gerakan mouse tidak sampai ke halaman ini,
+      // jadi cursor kustom disembunyikan dan cursor bawaan iframe yang dipakai.
+      // Begitu mouse bergerak lagi di halaman, onMouseMove menampilkannya kembali.
+      if (t.tagName === 'IFRAME') {
+        visible = false;
+        setIsVisible(false);
+        return set(null);
+      }
+
       if (t.closest('[data-cursor-none]')) return set(null);
 
       const labelEl = t.closest('[data-cursor]');
@@ -174,7 +163,6 @@ export default function CustomCursor() {
     };
   }, []);
 
-  // Putih di area gelap, hijau di area terang
   const c = isDark
     ? { border: 'border-white', borderSoft: 'border-white/60', fill: 'bg-white', fillSoft: 'bg-white/10', text: 'text-night', ripple: 'border-white/70' }
     : { border: 'border-moss', borderSoft: 'border-moss/50', fill: 'bg-moss', fillSoft: 'bg-moss/10', text: 'text-white', ripple: 'border-moss/60' };
@@ -213,7 +201,6 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Lingkaran pengikut */}
       <div
         ref={followerRef}
         aria-hidden="true"
@@ -224,7 +211,6 @@ export default function CustomCursor() {
           className={`absolute left-0 top-0 rounded-full border transition-[width,height,border-radius,background-color,border-color,opacity] duration-300 ease-out ${ringSize} ${ringStyle}`}
         />
 
-        {/* person: lingkaran besar berisi nama + teks melingkar yang berputar */}
         <div
           className={`absolute left-0 top-0 w-[104px] h-[104px] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center ${c.text} transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${show('person')}`}
         >
@@ -239,7 +225,6 @@ export default function CustomCursor() {
           <span className="relative font-heading text-[15px] leading-none whitespace-nowrap">{type === 'person' && hover.label}</span>
         </div>
 
-        {/* view: lingkaran kaca buram berisi ikon perbesar + label */}
         <div
           className={`absolute left-0 top-0 w-[88px] h-[88px] -translate-x-1/2 -translate-y-1/2 rounded-full flex flex-col items-center justify-center gap-1 text-white bg-white/15 backdrop-blur-md border border-white/40 shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${show('view')}`}
         >
@@ -251,7 +236,6 @@ export default function CustomCursor() {
           )}
         </div>
 
-        {/* logo: cincin warna instansi yang berputar + nama instansi melingkar */}
         <div
           style={{ '--logo': hover.color || 'var(--color-clay)' }}
           className={`absolute left-0 top-0 w-[148px] h-[148px] -translate-x-1/2 -translate-y-1/2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
@@ -272,7 +256,6 @@ export default function CustomCursor() {
           </svg>
         </div>
 
-        {/* orbit: lingkaran gelap berisi orbit 3D yang berputar, mengecil saat model digenggam */}
         <div
           className={`absolute left-0 top-0 w-[84px] h-[84px] -translate-x-1/2 -translate-y-1/2 rounded-full flex flex-col items-center justify-center gap-1 text-white bg-night/80 backdrop-blur-md border border-white/25 shadow-[0_12px_32px_rgba(0,0,0,0.3)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             type === 'orbit' ? (isClicking ? 'opacity-100 scale-[0.82]' : 'opacity-100 scale-100') : 'opacity-0 scale-50'
@@ -288,7 +271,6 @@ export default function CustomCursor() {
           <span className="text-[9px] font-medium uppercase tracking-[0.18em] whitespace-nowrap">{type === 'orbit' && (isClicking ? hover.sub || hover.label : hover.label)}</span>
         </div>
 
-        {/* slide: kapsul berisi label + panah yang terus bergeser */}
         <div
           className={`absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 h-12 pl-5 pr-4 rounded-full flex items-center gap-3 bg-white text-night shadow-[0_12px_32px_rgba(0,0,0,0.22)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             type === 'slide' ? 'opacity-100 scale-100' : 'opacity-0 scale-x-50 scale-y-75'
@@ -302,7 +284,6 @@ export default function CustomCursor() {
           </span>
         </div>
 
-        {/* frame: bingkai jendela bidik kamera */}
         <div
           className={`absolute left-0 top-0 w-[84px] h-[64px] -translate-x-1/2 -translate-y-1/2 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             type === 'frame' ? 'opacity-100 scale-100' : 'opacity-0 scale-150'
@@ -321,7 +302,6 @@ export default function CustomCursor() {
           <span className="absolute left-1/2 -bottom-6 -translate-x-1/2 text-[10px] font-medium uppercase tracking-[0.2em] whitespace-nowrap">{type === 'frame' && hover.label}</span>
         </div>
 
-        {/* mentor: lencana emas eksklusif untuk DPL */}
         <div
           className={`absolute left-0 top-0 w-[132px] h-[132px] -translate-x-1/2 -translate-y-1/2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             type === 'mentor' ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 rotate-45'
@@ -355,7 +335,6 @@ export default function CustomCursor() {
           </div>
         </div>
 
-        {/* shutter: lingkaran putih berisi bukaan lensa kamera */}
         <div
           className={`absolute left-0 top-0 w-[72px] h-[72px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white text-night shadow-[0_12px_32px_rgba(0,0,0,0.28)] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             type === 'shutter' ? (isClicking ? 'opacity-100 scale-90' : 'opacity-100 scale-100') : 'opacity-0 scale-50'
@@ -380,7 +359,6 @@ export default function CustomCursor() {
           </svg>
         </div>
 
-        {/* album: tumpukan kartu polaroid berisi foto yang disorot + nomor urut */}
         <div
           className={`absolute left-5 top-5 w-[104px] h-[100px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             type === 'album' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
@@ -400,7 +378,6 @@ export default function CustomCursor() {
           )}
         </div>
 
-        {/* external: panah ↗ yang berputar masuk */}
         <div
           className={`absolute left-0 top-0 w-16 h-16 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center ${c.text} transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${show('external')}`}
         >
@@ -418,7 +395,6 @@ export default function CustomCursor() {
         </div>
       </div>
 
-      {/* Titik pusat */}
       <div
         ref={dotRef}
         aria-hidden="true"
@@ -436,7 +412,6 @@ export default function CustomCursor() {
         />
       </div>
 
-      {/* Gelombang saat klik */}
       {ripples.map((r) => (
         <span
           key={r.id}

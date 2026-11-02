@@ -221,6 +221,14 @@ const img = (name) => `/images/kegiatan/${name}.jpg`;
 const thumbOf = (src) => src.replace('/kegiatan/', '/kegiatan/thumb/');
 
 // Foto pilihan yang tampil di bagian Galeri halaman utama (urutan = urutan tampil, foto pertama tampil besar)
+// Video dokumentasi akhir KKN di Google Drive.
+// Isi `driveId` dengan ID dari link berbagi: drive.google.com/file/d/<ID>/view
+// (akses berbagi harus "Siapa saja yang memiliki link"). Kosong = video tidak ditampilkan.
+export const FEATURE_VIDEO = {
+  driveId: '1PFvaPNesleLsP8NHcEV_s0en139sMIT-',
+  duration: '11 menit',
+};
+
 export const HOME_GALLERY = [
   'memilah-maggot',
   'pembekalan-kelurahan',

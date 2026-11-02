@@ -112,6 +112,7 @@ const FILTER_LABELS = {
 };
 
 export const HOME_GALLERY = ID.HOME_GALLERY;
+export const FEATURE_VIDEO = { ...ID.FEATURE_VIDEO, duration: '11 minutes' };
 
 const PARTNER_NAMES = {
   'LLDIKTI Wilayah IV': 'LLDIKTI Region IV',

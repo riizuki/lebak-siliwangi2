@@ -971,6 +971,37 @@ function GalleryGrid({ limit, picks, layout = 'classic' }) {
   );
 }
 
+// Video akhir KKN tepat setelah hero, diputar lewat Google Drive
+function FeatureVideo() {
+  const { FEATURE_VIDEO, t } = usePrefs();
+  if (!FEATURE_VIDEO.driveId) return null;
+
+  return (
+    <section id="video" aria-label={t.videoLabel} className="py-14 md:py-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 md:mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted mb-2">{t.videoLabel}</p>
+            <h2 className="text-2xl sm:text-3xl leading-tight text-ink">{t.videoTitle}</h2>
+            <p className="mt-2 max-w-2xl text-[15px] text-muted leading-relaxed">{t.videoDesc}</p>
+          </div>
+          <span className="text-sm text-muted">{FEATURE_VIDEO.duration}</span>
+        </div>
+        <div className="aspect-video overflow-hidden rounded-xl bg-night ring-1 ring-line shadow-[0_30px_70px_-35px_rgba(16,24,20,0.45)]">
+          <iframe
+            src={`https://drive.google.com/file/d/${FEATURE_VIDEO.driveId}/preview`}
+            title={t.videoTitle}
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            loading="lazy"
+            className="w-full h-full border-0"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function GallerySection() {
   const { GALLERY_ITEMS, HOME_GALLERY, t } = usePrefs();
   return (
@@ -1451,6 +1482,7 @@ export default function App({ gallery = isGalleryRoute() }) {
       <Navbar />
       <main>
         <HeroSection />
+        <FeatureVideo />
         <ActivityMarquee />
         <AboutSection />
         <ProgramSection />
