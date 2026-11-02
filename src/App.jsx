@@ -987,7 +987,8 @@ function FeatureVideo() {
           </div>
           <span className="text-sm text-muted">{FEATURE_VIDEO.duration}</span>
         </div>
-        <div className="aspect-video overflow-hidden rounded-xl bg-night ring-1 ring-line shadow-[0_30px_70px_-35px_rgba(16,24,20,0.45)]">
+        {/* Pemutar Drive butuh tinggi minimal ±300px (diberi sedikit cadangan); di bawah itu kontrolnya terpotong (terjadi di HP) */}
+        <div className="w-full aspect-video min-h-[320px] overflow-hidden rounded-xl bg-night ring-1 ring-line shadow-[0_30px_70px_-35px_rgba(16,24,20,0.45)]">
           <iframe
             src={`https://drive.google.com/file/d/${FEATURE_VIDEO.driveId}/preview`}
             title={t.videoTitle}
