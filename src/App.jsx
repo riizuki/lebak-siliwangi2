@@ -291,8 +291,8 @@ function ActivityMarquee() {
         </a>
       </div>
       <div className="marquee-fade space-y-3 sm:space-y-4">
-        <MarqueeRow items={GALLERY_ITEMS.slice(0, half)} duration={70} />
-        <MarqueeRow items={GALLERY_ITEMS.slice(half)} duration={80} reverse />
+        <MarqueeRow items={GALLERY_ITEMS.slice(0, half)} duration={95} />
+        <MarqueeRow items={GALLERY_ITEMS.slice(half)} duration={110} reverse />
       </div>
     </section>
   );
